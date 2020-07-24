@@ -1,0 +1,58 @@
+---
+title: "ASCOT ADAPT Statistics Summary"
+date: "July 2020"
+output:
+  pdf_document:
+    toc: no
+  bookdown::pdf_document2:
+    toc: no
+    fig_align: center
+    fig_height: 4
+    fig_width: 6
+    latex_engine: xelatex
+  word_document:
+    toc: no
+header-includes:
+- \usepackage{booktabs}
+- \usepackage{blkarray}
+- \usepackage{pdflscape}
+- \usepackage{lastpage}
+- \usepackage{vhistory}
+- \usepackage{titling}
+- \pretitle{\begin{center} \includegraphics[width=2in,height=2in]{../image.jpg}\LARGE\\}
+- \posttitle{\end{center}}
+- \newcommand{\blandscape}{\begin{landscape}}
+- \newcommand{\elandscape}{\end{landscape}}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+
+library(tidyverse)
+library(kableExtra)
+```
+
+In ASCOT ADAPT, each trial participant is assigned to receive a treatment regimen which consists of one treatment from each of a number of domains for which that participant is eligible. 
+Each viable treatment regimen is an available arm in the trial. 
+Initially, all interventions within each domain are assigned at random with equal probability.
+
+Sequential statistical analyses using Bayesian inference for pre-specified models of the primary outcome are undertaken as the trial progresses. 
+These analyses use the accumulating trial information for estimating the relative efficacy of the interventions being considered and assessing how probable it is that each intervention is superior (best within a domain), inferior (not best within a domain), effective (better than the standard of care), or futile (no better than the standard of care).
+
+Statistical decisions are then based on comparing the probability of each hypothesis with predefined evidence thresholds which when exceeded trigger a decision of superiority, inferiority, effectiveness, or futility of each intervention.
+If an intervention is found superior then randomisation to all other interventions within that domain may cease.
+If an intervention is found futile or inferior then randomisation to that intervention may cease.
+This allows for elimination of ineffective treatments as soon as there is sufficient evidence available.
+
+In addition to informing trial decisions, the updated model is used to update the allocation probabilities to each of the regimens still active in the trial via response adaptive randomisation.
+The allocation probabilities of each intervention within a domain are revised in proportion to the modelled probability that each regimen is best in terms of the primary outcome.
+This allows for trial participants to potentially benefit in light of the information being generated from the trial itself.
+
+The statistical models consist of structured parameters representing intervention effects. 
+To account for variation in the primary outcome the models are also adjusted for each participants domain eligibility, region, site, and time of enrolment.
+Additional prognostic factors, such as age or baseline severity, may also be included as model terms to increase the precision of treatment effect parameters.
+Subgroup effects can be investigated within an expanded model which allows for varying treatment effects across selected baseline factors.
