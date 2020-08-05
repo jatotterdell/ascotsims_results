@@ -1,7 +1,7 @@
 ---
 title: "ASCOT ADAPT Statistical Analysis Appendix"
 subtitle: "Australasian-India COVID-19 Trial Adaptive Platform Trial"
-date: "July 2020 - Version 0.1"
+date: "August 2020 - Version 0.2"
 output: 
   bookdown::pdf_document2:
     toc: true
@@ -28,7 +28,7 @@ header-includes:
   - \pagestyle{fancy}
   - \fancyhf{}
   - \fancyhead[LO]{ASCOT ADAPT Statistical Appendix}
-  - \fancyfoot[LO]{Version 0.1, July, 2020}
+  - \fancyfoot[LO]{Version 0.2, August, 2020}
   - \fancyfoot[RO]{\thepage\ of \pageref{LastPage}}
   - \renewcommand{\headrulewidth}{0pt}
   - \renewcommand{\footrulewidth}{0pt}
@@ -53,7 +53,8 @@ library(kableExtra)
     \begin{tabular}{lllp{5cm}}
     \hline
     Version & Date & Author & Description \\ \hline
-    0.1 & June 2020 & JT & Draft outline \\ 
+    0.1 & July 2020 & JT & Draft outline \\ 
+    0.2 & August 2020 & JT & Update to align with core protocol and incorporate comments from SWG \\ 
     \hline
     \end{tabular}
 \end{center}
@@ -81,7 +82,7 @@ kable(tab, booktabs = TRUE, linesep = "") %>%
 
 # Introduction
 
-ASCOT ADAPT is a multi-centre randomised adaptive platform clinical trial.
+Australasian COVID-19 Trial: An Adaptive Platform Trial (ASCOT-ADAPT) is a multi-centre randomised adaptive platform clinical trial to assess clinical, virological and immunological outcomes in patients with SARS-CoV-2 infection (COVID-19)
 The design allows for multiple interventions nested within intervention domains, a combination of which comprise a participants treatment regimen.
 The trial is designed to be perpetual and continue studying interventions with no designated target sample size.
 The goals are to learn about treatment effects of the interventions under study, and to effectively treat participants enrolled into the trial by shifting towards effective interventions as evidence is accrued.
@@ -99,27 +100,27 @@ Section \@ref(structure-of-trial) outlines the basics of the trial design as the
 
 * Age $\geq$ 18 years.
 * Admitted to an acute-care hospital.
-* At least one acute symptom attributable to SARS-CoV-2 infection. The symptom must include at least one of:
-	- Cough which is not normally present,
-	- Shortness of breath which is not normally present,
-	- Fever with measured temperature $\geq$ 38 degrees within past 24h.
-* Confirmed SARS-CoV-2 by nucleic acid testing in the past 12 days.
+* Confirmed SARS-CoV-2 by nucleic acid testing in the past 14 days.
 * Able to be randomised within 14 days of symptom onset.
+* At least one acute symptom attributable to SARS-CoV-2 infection.
 
 **Exclusion criteria**
 
-* Currently receiving acute intensive respiratory support (invasive or non-invasive mechanical ventilation) or vasopressor/inotropic support. Note, participants already on non-invasive ventilation (either CPAP or BiPAP) in the community can still be recruited. Humidified high flow nasal oxygen will not be considered an exclusion criterion.
-* Previous participation in the trial
-* Treating team deems enrolment in the study is not in the best interest of the patient
-* Death is deemed to be imminent and inevitable within the next 24 hours
+* Currently receiving acute intensive respiratory support (invasive or non-invasive mechanical ventilation) or vasopressor/inotropic support. Note, participants already on community based non-invasive ventilation (either CPAP or BiPAP) can still be recruited. Humidified high flow nasal oxygen will not be considered an exclusion criterion.
+* Previous participation in the trial.
+* Treating team deems enrolment in the study is not in the best interest of the patient.
+* Death is deemed to be imminent and inevitable within the next 24 hours.
+* Either patient or their primary treating clinician are not committed to active treatment.
 
 ## Treatment Domains
 
-A treatment domain groups a collection of treatments which are identified by a common clinical definition.
-The expectation is that each trial participant is randomly allocated to only one treatment (which may be a combination of individual treatments available as a stand-alone option in the domain) within each domain.
+A treatment domain consists of a collection of competing interventions within a common clinical mode.
+The expectation is that each trial participant is randomly allocated to only one intervention (which may be a combination of individual intervention available as a stand-alone option in the domain) within each domain.
+In this sense, the domain interventions are mutually exclusive treatment options.
+The actual treatment domains in use will be specified in the core protocol, however, for generalisability, this documents discusses the analysis in terms of generic domains.
 
 In this document, domains are labelled by capital letters, $A$, $B$, $C$, and when necessary a generic domain will be represented by $d$.
-Within each domain there will be a number of distinct treatment options denoted by subscripts, $d_0, d_1, d_2,...d_{K_d}$ where $0$ generally indicates no treatment.
+Within each domain there will be a number of distinct intervention options denoted by subscripts, $d_1, d_2,...d_{K_d}$ where $1$ generally indicates no treatment or standard of care within that domain. Additionally, if participants are ineligible for a domain or the domain was unavailable to them at the time of randomisation an additional distinct treatment option $d_{0}$ may be defined and assigned to these participants. Additionally, as the trial progresses interventions may be dropped and introduced within a domain. While $K_d$ denotes the total number of interventions available in the domain over the course of the trial, $K_d^\prime$ will indicate the number of actively randomised treatments within a domain.
 
 The number of domains and/or treatments within a domain may change as the trial progresses, but for concreteness, this document will refer to 3 treatment domains $A$, $B$, and $C$.
 
@@ -129,90 +130,127 @@ A treatment regimen consists of a collection of one selected intervention from e
 Assuming that every intervention from each domain may be given in combination with all interventions from every other domain, the number of distinct regimens is equal to $K_A\times K_B\times K_C$.
 A treatment regimen may be denoted by an index $j = 1,2,...,K_AK_BK_C$ or by a string indicating the comprising interventions. 
 For example, the regimen composed of treatment $1$ from domain $A$, treatment $2$ from domain $B$ and treatment $0$ from domain $C$ may be represented by $A_1B_2C_0$.
+For any particular regimen $j$, the notation $d(j)$ will refer to the intervention from domain $d$ which forms part of the regimen $j$, such as $\{A(j)=A_1,B(j)=B_2,C(j)=C_0\}$ for the previous example regimen.
 
 ## Standard of Care
 
-Standard of care may differ by region and or site.
-Additional treatments given as part of standard of care will be collected and adjusted for in the analyses where deemed relevant.
-All such standard of care factors will be reported as part of the analysis.
+Standard of care will vary between regions and sites, and over the course of the trial. 
+At the time of writing, it is likely to include low-dose dexamethasone (6mg daily IV or PO for 10 days) in all patients requiring supplemental oxygen, and remdesivir in those regions/sites where it is available, again for patients requiring supplemental oxygen. 
+Standard of care is not dictated by the core protocol, but data will be collected on any agents used as standard and adjusted for in the statistical model where deemed relevant.
+Currently, adjustment will be made for dexamethasone and remdesivir.
+
 
 ## Subgroups
 
-Treatment effect heterogeneity will be explored for:
+Treatment effect heterogeneity will be explored for the following variables as measured at baseline across all domains:
 
-  * region
-  * days since symptom onset: $\leq$ 7 days or $>$ 7 days
+  * country/region
+  * days since symptom onset: $\leq 7$ days or $> 7$ days
+  * severity of illness: required supplemental oxygen at time of randomisation or oxygen saturation less than 94% at room air
+  * age: $<65$ years of age or $\geq 65$ years of age
+  * standard of care: receiving remdesivir prior to randomisation or will be provided as part of care
+  * standard of care: receiving dexamethasone prior to randomisation or to be provided as part of care
+
+Other domain-specific subgroup analyses may be specified in the domain appendices.
+Any other subgroup analyses will be post-hoc and reported as such.
 
 ## Randomisation
 
-Patients are randomised to regimens.
-Initially, all regimens will be allocated with equal probability.
+Patients are randomised to regimens which consist of one treatment from each domain.
+Initially, all treatments within a domain and therefore all regimens will be allocated with equal probability.
 Participants will only be randomised to regimens comprising treatments for which they are eligible and treatments which are available at the site they are enrolled.
 
 Response adaptive randomisation will be used to update the allocation ratios following each sequential analysis.
-The mass-weighted urn design [@zhao2015mass; @ryeznik2018comparative] will be used following RAR to allow non-integer allocation ratios to reduce treatment imbalance over time between sequential analyses.
-
-
-\clearpage
+The standard of care option within each domain will have a fixed allocation of $1/K^\prime_d$ where $K^\prime_d$ is the number of active interventions in the domain.
 
 # Endpoints and Estimands
 
 ## Primary Outcome
 
-The primary outcome  is whether the participant is alive without having required new intensive respiratory support (invasive or non-invasive ventilation) or vasopressor/inotropic support in the 28 days after randomisation. 
-This includes any participant who receives non-invasive mechanical ventilation (either CPAP or BIPAP) any time after enrolment even if not transferred to ICU. 
-It does NOT include the use of humidified high-flow nasal prong oxygen. 
-Participants on pre-existing home BiPAP or CPAP will not be considered to have met the primary endpoint unless they have either:
+Death from any cause or requirement of new intensive respiratory support (invasive or non-invasive ventilation) or vasopressor/inotropic support in the 28 days after randomisation. 
+This includes any participant who receives non-invasive mechanical ventilation (either CPAP or BIPAP, apart from the below considerations) any time after enrolment even if not transferred to ICU. 
+It does NOT include the use of humidified high-flow nasal prong oxygen.
 
-* required invasive mechanical ventilation (i.e. intubation)
-* graduated from CPAP whilst asleep to BiPAP at any time
-* graduated from BiPAP only whilst asleep to BiPAP for >12 hours/day
+Participants on pre-existing home BiPAP or CPAP will not be considered to have met the primary outcome unless they have either:
+
+* required invasive mechanical ventilation (i.e. intubation), or
+* graduated from CPAP only whilst asleep to BiPAP at any time, or
+* raduated from BiPAP only whilst asleep to BiPAP for >12 hours/day, or
 * died by day 28. 
 
 This endpoint applies across all domains. 
 
+There may be cases where a patient has been assessed as requiring intensive respiratory support (invasive or non-invasive ventilation) or vasopressor/inotropic support, but the patient or family has declined and the patient has been taken home. 
+If attempts to obtain 28-day data are unsuccessful or not possible, and the investigator deems that the patient will be highly likely to die within 28 days from randomisation, these participants will be deemed to have met the primary outcome.
+
 ## Secondary Outcomes
 
 1. Time to clinical recovery during the first 28 days after enrolment.
+Time to clinical recovery is defined as the first day, during the 28 days after enrolment, on which a patient satisfies categories 1, 2, or 3 on the WHO eight-point ordinal outcome scale
 2. WHO 8-point ordinal outcome scale at days 7 and 28.
-3. All-cause mortality at 28 and 90 days.
-4. Days alive and free of hospital by 28 days.
-5. Days alive and free of ventilation by 28 days.
-6. Presence of patient reported outcome of shortness of breath at days 7, and 28, 90.
-7. Quality of life as measured by EQ5D scores at days 28 and 90.
+Admission to a Hospital in the Home unit is not counted as hospitalisation for the purposes of this ordinal scale. 
+Patients who have been admitted to hospital and transferred to a Hospital in the Home unit will be assessed as either ordinal score 1 or 2.
+The ordinal score is:
+    i. Not hospitalised, no limitations on activities
+    ii. Not hospitalised, limitation on activities
+    iii. Hospitalised, not requiring supplemental oxygen and no longer requiring ongoing medical care (used if hospitalization was extended for infection control purposes)
+    iv. Hospitalised, not requiring supplemental oxygen but requiring ongoing medical care (COVID-19 related or other medical conditions)
+    v. Hospitalised, requiring supplemental oxygen
+    vi. Hospitalised, on non-invasive ventilation or high flow oxygen devices
+    vii. Hospitalised, on invasive mechanical ventilation or ECMO
+    viii. Death.
+3. All-cause mortality at 28 and 90 days after randomisation.
+4. Days alive and free of hospital by 28 days after randomisation.
+Days spent in a Hospital in the Home unit will not be counted as days in hospital as hospital means 'acute-care hospital' for the purposes of this endpoint.
+5. Days alive and free of invasive or non-invasive ventilation by 28 days after randomisation
+6. Presence of patient reported outcome of shortness of breath at days 14, 28, and 90 after randomisation.
+    * Dichotomous comparison of a subjective measure of shortness of breath such as: “Are you currently experiencing shortness of breath that you didn’t have before you got COVID, or which is worse now than before you got COVID?”
+    * Ordinal comparison of the modified Medical Research Council (mMRC) breathlessness scale:
+        * Grade 0 - I only get breathless with strenuous exercise
+        * Grade 1 - I get short of breath when hurrying on level ground or walking up a slight hill
+        * Grade 2 - On level ground, I walk slower than people of the same age because of breathlessness, or I have to stop for breath when walking at my own pace on the level
+        * Grade 3 - I stop for breath after walking about 100 metres or after a few minutes on level ground
+        * Grade 4 - I am too breathless to leave the house or I am breathless when dressing or undressing
+7. Quality of life as measured by EQ-5D-5L questionnaire at days 28 and 90.
 
 
 ## Covariates
 
-Baseline covariates which will be part of the primary analyses include: country, site, and time of enrolment.
+Baseline covariates which will be part of the primary analyses include: 
+
+* country/region
+* site
+* time of enrolment
+* age $\geq 65$ years
+* severity of illness: required supplemental oxygen at time of randomisation or oxygen saturation less than 94% at room air
 
 
 ## Estimands
 
-The primary estimand will be the relative log-odds of the primary outcome for each treatment at the planned endpoint of 28 days after randomisation for all randomised participants.
+The primary estimand will be the relative log-odds of the primary outcome for each treatment at the planned endpoint of 28 days after randomisation for all randomised participants irrespective of post-randomisation events.
 This is a *de facto* (effectiveness) estimand.
-Data after treatment withdrawal or switching will be included in the primary analysis.
+Data collected after post-randomisation events such as treatment withdrawal or protocol deviations will be included in the primary analysis.
 
-The secondary estimand will be the log-odds of the primary outcome for each treatment at the planned endpoint of 28 days after randomisation for participants who tolerated and/or adhered to the randomised treatment.
+A secondary estimand will be the log-odds of the primary outcome for each treatment at the planned endpoint of 28 days after randomisation for participants without protocol deviations.
 This is a *de jure* (efficacy) estimand.
-Data after treatment withdrawal or switching from the initially randomised treatment will not be included in the primary analysis.
+Primary endpoint data collected after protocol deviations have occurred will not be included in this secondary analysis.
 
-\clearpage
 
 # Statistical Modelling
 
 Inferences in the trial will be based on Bayesian models.
 The models will take into account the trial implementation by accounting for variation in outcomes by region (country), site, and time since trial commencement.
 The primary model will estimate treatment effects assuming no interaction between treatments across different domains.
-Secondary models will investigate interaction effects across treatment domains and treatment effect heterogeneity by region.
+Secondary models will investigate interaction effects across treatment domains and treatment effect heterogeneity by subgroup.
 All model parameter posteriors and posterior quantities will be estimated using Markov chain Monte Carlo draws from the joint posterior density.
+
 
 ## Analysis Population
 
-The primary analysis population will include all participants who are randomised to at least one of the interventions.
-This analysis set will follow the intention-to-treat (ITT) principle (treatment-policy estimand) in that randomised patients will be analysed according to the regimen to which they were initially allocated regardless of protocol deviations.
+The primary analysis population will include all participants who were randomised to at least one of the interventions and have passed the primary endpoint of 28 days after randomisation with their primary outcome status either known or known to be missing. At sequential analyses, participants who have been randomised but have not yet reached the primary endpoint will be excluded.
+This analysis set will follow the intention-to-treat (ITT) principle (treatment-policy estimand) in that all randomised patients will be included and analysed according to the regimen to which they were initially allocated irrespective of any deviations from this regimen or any other protocol deviations. This analysis population will inform the primary estimand.
 
-The secondary analysis population will also include all participants who are randomised to at least one of the interventions.
+A secondary analysis population will include all participants who are randomised to at least one of the interventions.
 However, this analysis set will follow the per-protocol (PP) definition with randomised patients included in the analysis only if no protocol deviations occurred prior to the primary endpoint.
 
 ## Primary Model
@@ -221,7 +259,7 @@ The following symbols will be used throughout:
 
 * $r=1,...,R$ will denote regions.
 * $s=1,...,S_r$ will denote sites within a region.
-* $t=1,...,T$ will denote participant cohort grouped according to time of enrolment relative to trial commencement.
+* $t=1,...,T$ will denote participant cohort grouped according to time of enrolment and timing of sequential analysis relative to trial commencement.
 * $d=A,B,C$ or $d=1,2,3$ will denote domains, $d_k$ will denote treatment $k$ within domain $d$, and $Q$ will denote the number of domains.
 
 For a participant $i$ enrolled in the study the notation $r(i)=1,...,R$ will be used to indicate the region to which that participant belongs, similarly for site, $s(i)$, cohort $t(i)$, and for each domain $A(i),B(i),C(i)$.
@@ -229,25 +267,24 @@ For a participant $i$ enrolled in the study the notation $r(i)=1,...,R$ will be 
 The primary outcome will be modelled by logistic regression (with crossed random-effects) with linear predictor and probability of outcome for a participant $i=1,2,3,...$
 $$
 \begin{aligned}
-\eta_i &= \beta_0 + \sum_{d} x_{d(i)}^\mathsf{T}\beta_d + \rho_{r(i)} + \zeta_{s(i)} + \tau_{t(i)}\\
+\eta_i &= \beta_0 + \sum_{d} x_{d(i)}^\mathsf{T}\beta_d + \rho_{r(i)} + \zeta_{s(i)} + \tau_{t(i)} + z_i^{\mathsf{T}}\alpha\\
 \pi_i &= \text{logit}^{-1}(\eta_i).
 \end{aligned}
 $$
 
 The terms in the model are:
 
-  * $\beta_0$ - the model intercept which represents the baseline average log-odds of response on no treatment across sites.
+  * $\beta_0$ - the model intercept which represents the baseline average log-odds of response on standard of care within the reference group.
   * $\beta_d$ - the parameters reflecting the effect of each treatment, the interpretation of which is dependent on the structure of the domain design matrix $X_d$ with $x_{d}$ the relevant row from this matrix.
   * $\rho_r$ - the change in baseline response associated with region $r$.
   * $\zeta_s$ - the change in baseline response associated with site $s$.
   * $\tau_t$ - adjusts for change in the baseline response over time since the trial commenced. Each $t$ represents a cohort of patients recruited in a given period of time and the initial cohort is the reference group $(\tau_1 = 0)$.
+  * $\alpha$ - other covariates specified for inclusion in the primary model.
 
-Additional covariates which may be included in the model as required are to adjust for additional baseline differences between participants, for example:
+The design matrices will be specified in terms of treatment coding and may include interactions for combinations of interventions within a domain. 
+For example if intervention $d_3$ was the combination of $d_1$ and $d_2$ given together as opposed to each alone then $\beta_{d3}$ would denote an interaction term coefficient.
 
-  * indicator for whether standard of care includes Remdesivir.
-  * indicator for whether the participant was ineligible for a given treatment due to contraindication.
-
-At times it will be more useful to consider the model in terms of the the response under each regimen $j=1,2,...,K_AK_BK_C$ within the referent group
+At times it will be more useful to consider the model in terms of the the response under each regimen $j=1,2,...,K_AK_BK_C$ within the referent group, i.e.
 $$
 \begin{aligned}
 \eta_j &= \beta_0 + \sum_{d} x_{d(j)}^{\mathsf{T}}\beta_d \\
@@ -256,7 +293,7 @@ $$
 $$
 where $d(j)$ returns the treatment from domain $d$ which is used in regimen $j$.
 
-## Primary Model Terms and Priors
+## Primary Model Priors
 
 ### Treatments
 
@@ -265,15 +302,14 @@ The baseline-response, $\beta_0$, and the treatment effects $\beta_d$ are given 
 $$
 \begin{aligned}
 \beta_0 &\sim \text{Normal}(0, 10^2) \\
-\beta_{dk} &\overset{\text{iid}}{\sim} \text{Normal}(0, 1),\quad k=1,...,d_{K_d},\ d=1,2,3.
+\beta_{dk} &\overset{\text{iid}}{\sim} \text{Normal}(0, 1),\quad k=0,1,...,d_{K_d},\ d=1,2,3,....
 \end{aligned}
 $$
 
-The treatment effect parameter $\beta_d$ consists of a reference treatment with $\beta_{d1}=0$ and may also include terms for domain eligibility and domain randomisation.
+The treatment effect parameter $\beta_d$ consists of a reference treatment with $\beta_{d1}=0$ and will also include a term for domain ineligibility or unavailability $\beta_{d0}$.
 For example, suppose at trial commencement two domains $A$ and $B$ are open and later in the trial a third domain $C$ is opened.
 Participants who entered the trial prior to domain $C$ opening were not randomised to that domain.
-The term for domain randomisation aims to account for the possibility that participants who were randomised to $C$ differ than those who were not.
-This term is in addition to a term for participants who were not randomised due to domain ineligibility.
+Given that domain $C$ was unavailable to these participants they would contribute to $\beta_{C0}$.
 
 ### Regions
 
@@ -316,33 +352,44 @@ $$
 $$
 This prior enforces some smoothing of the baseline response across cohorts expecting only small variations between cohorts in temporal proximity.
 
+### Other Covariates
+
+Other covariates parameters will have prior
+$$
+\alpha \overset{\text{iid}}{\sim} N(0, 10^2)
+$$
+
 ## Between Domain Interactions
 
-Interactions between treatments will be investigated as part of an extended model.
+Interactions between treatments in different domains may be investigated as part of an extended model where deemed relevant.
 Only two-way interactions will be considered.
-The extended model has the form
+The extended model has the general form
 
 $$
 \begin{aligned}
 \eta_i &= \beta_0 + \sum_{d} x_{d(i)}^{\mathsf{T}}\beta_d + 
 \sum_{d_1<d_2}\left(x_{d_1(i)}^{\mathsf{T}}\otimes x_{d_2(i)}^{\mathsf{T}}\right)\gamma_{d_1d_2} + 
 \rho_{r(i)} + \zeta_{s(i)} + \tau_{t(i)} \\
-\gamma_{kl} &\sim \text{Normal}(0, 0.1^2).
+\gamma_{kl} &\sim \text{Normal}(0, 0.1^2)
 \end{aligned}
 $$
+where a informative prior on no interaction effect is specified.
+
+The interaction may only be of interest for a subset of domains or interventions (the rest having $\gamma_{d_1d_2}=0$).
+
 
 ## Subgroup Analyses
 
-Region-specific effects which borrow information across regions are of interest.
-The primary analysis model may be extended to allow for varying treatment effects by region via
+Subgroup effects which borrow information across groups are of interest.
+The primary analysis model may be extended to allow for varying treatment effects by subgroup, for example for region the model would be extended via
 $$
 \begin{aligned}
-\eta_i &= \beta_0 + \sum_{d} x_{d(i)}^{\mathsf{T}}\beta_{d} + \sum_{d} x_{d(i)}^{\mathsf{T}}\rho_{d,r(i)} + \rho_{0,r(i)} + \zeta_{s(i)} + \tau_{t(i)}\\
+\eta_i &= \beta_0 + \sum_{d} x_{d(i)}^{\mathsf{T}}\beta_{d} + \sum_{d} x_{d(i)}^{\mathsf{T}}\rho_{d,r(i)} + \rho_{0,r(i)} + \zeta_{s(i)} + \tau_{t(i)} + z_i^\top\alpha\\
 \rho_{r}|\Omega_\rho &\overset{\text{iid}}{\sim} N(0, \Omega_\rho),\ r=1,...,R \\
 \Omega_\rho &\sim p(\Omega_\rho)
 \end{aligned}
 $$
-where $p(\Omega_r)$ is the prior on the covariance of the within region treatment effects.
+where $p(\Omega_r)$ is the prior on the covariance of the region treatment effects.
 One approach is to specify the prior marginal standard deviations and correlation separately [@joe2006generating; @lewandowski2009generating; @tokuda2011visualizing].
 The prior covariance is specified as
 $$
@@ -354,38 +401,46 @@ $$
 $$
 
 
-## Unavailabilities and Eligibilities
-
-If an intervention is unavailable at a site at the time of a participants randomisation, then that participant will be randomised to 
-one of the available interventions in the domain.
-The participant will be included in the primary analysis assuming unrestricted randomisation.
-Site variability with respect to domain availability will be subsumed in the corresponding site effect.
+## Ineligible or Unavailable
 
 At the time of enrolment, a participant may be ineligible for a particular domain.
 If a participant is not eligible for a given domain then that participant will not be randomised to an intervention for that domain.
 The participant will be included in the primary analysis as long as they are eligible for at least one other domain. 
-A covariate will indicate each domain eligibility to account for association between participant factors determining domain ineligibility and the outcome.
+A covariate will indicate ineligibility for each domain to account for possible association between participant factors determining domain ineligibility and the primary outcome.
 
 At the time of enrolment, a participant may be eligible for all domains, but ineligible for certain interventions within some domains.
 If a participant is ineligible for any active interventions (but eligible for an inactive) in the domain then they will be treated as ineligible for the domain itself.
 If a participant is only eligible for one active intervention, then the participant may receive it, however they will be treated as ineligible for the domain itself.
-If a participant is eligible for at least two active interventions, the participant will be randomised amongst those eligible interventions.
-The participant will be included in the primary analysis and a covariate indicating their eligibility will be included to account for associations between participant factors determining ineligibility for a particular intervention and the outcome.
-Each intervention in will have it's own ineligibility effect where required.
+If a participant is eligible for at least two active interventions, the participant will be randomised amongst those eligible interventions and treated as eligible for the domain.
+The participant will be included in the primary analysis and a covariate indicating their treatment specific ineligibility will be included to account for possible associations between participant factors determining ineligibility for a particular intervention and the outcome.
+Each intervention in will have it's own ineligibility effect where necessary.
+
+If a domain is unavailable at the time of randomisation, then the participant will be categorised as ineligible.
+If an intervention is unavailable at a site at the time of a participants randomisation, then that participant will be treated as ineligible for the intervention and randomised to the available interventions in the domain so long as there is more than one available.
+
+The assumption being made in the above is that ineligibility for any domain or treatment, and unavailability of any domain or treatment, has no effect on treatment response to the interventions in the other domains.
 
 The covariate vector, $e_i$, which indicate intervention ineligibility will be included in the primary model with coefficient, $\xi$, with prior
 $$
-\xi \sim N(0,1).
+\xi \sim N(0,10^2).
 $$
 
 
 ## Missing Data
 
-Missing primary endpoint data will not be imputed and participants without primary endpoint data will be excluded from sequential analyses.
-Missing covariate information may be imputed based on other available data (e.g. unknown region, site or time of enrolment).
+In the primary analysis, missing primary outcome data will not be imputed and participants without primary outcome data will be excluded from the sequential analyses.
+Missing covariate information may be imputed based on other available data (e.g. missing region, site or time of enrolment).
 
 
-\clearpage
+## Sensitivity Analyses
+
+Sensitivity analyses may include applying the same model to a different analysis population or varying the primary model.
+In particular, the following sensitivity analyses will be explored:
+
+* the per-protocol analysis
+* separate models fit to domain eligible subsets: for example, for each domain sensitivity analyses will restrict to only those participants who were eligible for the domain and only participants who were eligible for all interventions in the domain.
+* sensitivity of the results to the choice of priors: allowing priors to be less or more informative than those specified in this SAP.
+* method of handling missing primary outcome data, e.g. complete-case analysis, worst-case, or best-case scenarios.
 
 # Statistical Quantities
 
@@ -399,47 +454,54 @@ The probability that regimen $j$ is the best regimen (in terms of minimising the
 $$
 \phi_j = \mathbb P[\text{regimen }j\text{ is best}] = \mathbb P[j^\star = j] = \mathbb P[\eta_j < \eta_{l}, \forall l\ne j],\quad j=1,...,K_AK_BK_C.
 $$
-This quantity will be used for informing the response-adaptive randomisation, allocating participants to more effective regimens with a higher probability than less effective regimens.
+
 
 ## Best Treatment
 
 Define the probability that a treatment combination within a domain $d$ is in the best regimen $j^\star$ by
 $$
 \begin{aligned}
-\varphi_{dk} = \mathbb P[\text{treatment }d_k\text{ is in best regimen}] = \mathbb P[d(j^\star)=k],&\quad k=0,1,...,K_d
+\varphi_{dk} = \mathbb P[\text{treatment }d_k\text{ is in best regimen}] = \mathbb P[d(j^\star)=k],&\quad k=1,...,K_d
 \end{aligned}.
 $$
 Since each regimen contains only one intervention from each domain (which may be no intervention) the probabilities satisfy $\Sigma_{k=1}^{K_d}\varphi_{dk} = 1$ for each domain.
-If an intervention $k$ in domain $d$ has low probability of being in the best regimen the intervention may be dropped.
-If one intervention has high probability of being in the best regimen all other interventions in the domain may be dropped.
+
+In the absence of interactions across domains as specified in the primary model this is equivalent to
+$$
+\varphi_{dk} = \mathbb P[\text{treatment }d_k\text{ is best in domain}] = \mathbb P\left[\underset{l=1,...,K_d}{\text{argmin}} (x_{d(l)}^{\mathsf{T}}\beta_d)=k\right],\quad k=1,...,K_d
+$$
+
+If an intervention $k$ in domain $d$ has low probability of being the best then the intervention may be dropped.
+If one intervention has high probability of being the best then all other interventions in the domain may be dropped.
 
 ## Treatment Contrasts
 
 Define the probability that a treatment combination in a domain has a lower log-odds of the outcome than another treatment combination in the same domain by
 $$
-\psi_{kl}^d(\Delta)=\mathbb P[\text{treatment }d_k\text{ better than treatment } d_l] =\mathbb P\left[x_{d(k)}^{\mathsf{T}}\beta_d < x_{d(l)}^{\mathsf{T}}\beta_d+\Delta\right],\quad k,l\in\{0,1,...,K_d\}.
+\psi_{kl}^d(\Delta)=\mathbb P[\text{treatment }d_k\text{ better than treatment } d_l] =\mathbb P\left[x_{d(k)}^{\mathsf{T}}\beta_d < x_{d(l)}^{\mathsf{T}}\beta_d+\Delta\right],\quad k,l\in\{1,...,K_d\}.
 $$
-where $\Delta$ is a reference treatment effect.
+where $\Delta$ is a reference relative treatment effect.
 
-For example, the probability that treatment $k>0$ in domain $d$ is effective (better than no treatment, $k=0$) is $\psi_{k0}^d(0)$. The probability that treatment $k$ reduces the log-odds of response by more than $-\log(1.1)$ (i.e. an odds ratio of 1/1.1) compared to no treatment is $\psi_{k0}^d(-\log(1.1))$.
+For example: 
 
-If at least one intervention in a domain has high probability of being better than no intervention, then treatment option $d_0$ may be dropped.
+* The probability that treatment $k>1$ in domain $d$ is effective (better than standard of care, $k=1$) is $\psi_{k1}^d(0)$.
+* The probability that treatment $k$ is futile (reduces the log-odds of response by no more than $-\log(1.1)$) compared to no treatment is $\psi_{k1}^d(-\log(1.1))$.
+* The probability that treatment $k$ is non-inferior to a treatment $l$ (reduces the log-odds of response by no less than $\log(1.1)$)  is $\psi^d_{kl}(\log(1.1))$.
 
-\clearpage
 
 # Trial Adaptations and Statistical Decisions
 
 As the trial proceeds, some aspects of the trial status may change, for example new sites may begin recruiting or availability of treatments may change at sites. 
-Similarly, treatments and/or domains may be added or removed based on the trial results themselves, or due to information external to the trial.
+Similarly, treatments and/or domains may be added or removed based on the trial results themselves, or due to information external to the trial. The model previously specified has been outlined so as to be generic, where the basic model components remain consistent even if the particulars may change over time.
 
-The model previously specified has been outlined so as to be generic, where the basic model components remain consistent even if the particulars may change over time.
-For adaptations internal to the trial, predefined rules are put in place to inform trial decisions.
+For adaptations internal to the trial, predefined rules are put in place to inform trial decisions conditional on the primary model.
+Pending review, these statistical decisions will inform platform conclusions such as declaring an intervention effective or superior in a domain and dropping interventions from active randomisation. The following sections outline these adaptations.
 
 
 ## Sequential Analyses
 
 Analyses will be conducted frequently throughout the trial.
-The first analysis will be conduced when a target sample size (400) has primary outcome data available.
+The first analysis will not be conducted before at least $100\times\max_d(K_d)$, that is, at least 100 participants per active treatment option within the largest domain.
 Subsequent analyses will be planned to occur at perpetually at fixed intervals (every 1 month) as long as the trial proceeds.
 If recruitment is slow, there may be little change in sample size from one analysis to the next, in which case, the analysis may be skipped.
 
@@ -450,25 +512,26 @@ The pre-specified adaptations are outlined below.
 
 ## Response-Adaptive Randomisation
 
-Following each analysis, the allocation probabilities to regimens will be updated to be proportional to the probability that each regimen results in the lowest probability of response.
-The probability that a participant is allocated to regimen $j$ is defined as
+Following each analysis, the allocation probabilities to treatments within domains will be updated to be proportional to the probability that each treatment results in the lowest log-odds of response amongst all in that domain.
+If still active, the control option within each domain will have fixed allocation of $\rho_{d1}=1/K_d^\prime$ where $K_d^\prime$ is the number of active interventions in the domain following the current analysis. Otherwise, $\rho_{d1}=0$.
+For non-control treatments, the allocation probabilities to active arms are
 $$
-\varrho_j \propto \sqrt{\frac{\phi_j}{n_j}}
+\varrho_{dk} = (1-\rho_{d1})\left[\sqrt{\frac{\varphi_{dk}}{n_{dk}}} \middle /\left(\sum_{k}\sqrt{\frac{\varphi_{dk}}{n_{dk}}}\right)\right],\quad k>1,\ d=1,2,3
 $$
-where $\phi_j$ is the probability regimen $j$ minimises response as previously defined, and $n_j$ is the sample size already allocated to regimen $j$.
+where $\varphi_{dk}$ is the probability treatment $k$ is best in domain $d$ and $n_{dk}$ is the number having received treatment $k$ in domain $d$.
 
-If a new participant is ineligible for an intervention then any regimens involving that intervention will have $\varrho_j$ set to zero for that participant and the remaining regimens re-normalised to sum to one.
+The probability of receiving a given regimen, $j$, made up of treatments $A(j),B(j),C(j)$ from domains $A,B,C$ respectively is then $\rho_j=\varrho_{A(j)}\varrho_{B(j)}\varrho_{C(j)}$ assuming the participant is eligible for all interventions and domains. If a new participant is ineligible for an intervention then $\varrho_{dk}=0$ will be set for that intervention for the participant and the remaining values re-normalised.
 
 
 ## Effectiveness
 
 At each analysis, the posterior probability that an intervention is effective (better than standard of care, see Section \@ref(treatment-contrasts)) will be compared to a threshold of 0.99.
-If this threshold is exceeded then a decision of effectiveness may be made for the intervention and the no treatment option may be dropped from the domain.
+If this threshold is exceeded then a statistical decision of effectiveness will be made for the intervention and the no treatment option may be dropped from the set of active interventions in the domain (allocation probability set to 0 for the domain standard of care).
 
 ```{r}
 tab <- tribble(
   ~ Decision, ~ Comparison, ~ Quantity, ~Threshold, ~Action,
-  "$d_k$ is effective", "$d_k$ vs $d_0$", "$\\psi_{k0}^d(0)$", "$>0.99$", "Drop $d_0$")
+  "$d_k$ is effective", "$d_k$ vs $d_1$", "$\\psi_{k1}^d(0)$", "$>0.99$", "Drop $d_0$")
 kable(tab, booktabs = T, escape = F, linesep = "",
       caption = "Intervention effectiveness.") %>%
   kable_styling(latex_options = "HOLD_position")
@@ -476,13 +539,15 @@ kable(tab, booktabs = T, escape = F, linesep = "",
 
 ## Futility
 
-At each analysis, the posterior probability that an intervention is futile (insufficiently better than standard of care, see Section \@ref(treatment-contrasts)) will be compared to a threshold of 0.95.
-If this threshold is exceeded then a decision of futility may be made for the intervention and the treatment option may be dropped from the domain.
+At each analysis, the posterior probability that an intervention is futile (insufficiently better than standard of care, see Section \@ref(treatment-contrasts) or insufficiently better than another reference treatment) will be compared to a threshold of 0.95.
+If this threshold is exceeded then a statistical decision of futility will be made for the intervention and the treatment option may be dropped from the set of active interventions in the domain (allocation probability set to 0 for the futile intervention).
+
+The two contrasts of primary interest are the comparison of each treatment with the reference treatment $(\psi_{k1}(\Delta))$, and where relevant, the comparison of combination of within domain treatments versus either given alone. For example, if treatment option $l$ is the combination of treatment options $k_1$ and $k_2$ given together then the contrasts $\psi_{l,k_1}^d(-\log(1.1))$ and $\psi_{l,k_2}^d(-\log(1.1))$ may be of interest as additional futility checks for intervention $l$.
 
 ```{r}
 tab <- tribble(
   ~ Decision, ~ Comparison, ~ Quantity, ~Threshold, ~Action,
-  "$d_k$ is futile", "$d_k$ vs $d_0$", "$\\psi_{k0}^d(-\\ln(1.1))$", "$>0.95$", "Drop $d_k$")
+  "$d_k$ is futile", "$d_k$ vs $d_1$", "$\\psi_{k1}^d(-\\ln(1.1))$", "$>0.95$", "Drop $d_k$")
 kable(tab, booktabs = T, escape = F, linesep = "",
       caption = "Intervention futile.") %>%
   kable_styling(latex_options = "HOLD_position")
@@ -490,8 +555,8 @@ kable(tab, booktabs = T, escape = F, linesep = "",
 
 ## Superiority
 
-At each analysis, the posterior probability that an intervention is superior (in the best regimen, see Section \@ref(best-treatment)) will be compared to a threshold of $0.99^{K_d-1}$.
-If this threshold is exceeded then a decision of superiority may be made for the intervention and all other treatment options may be dropped from the domain.
+At each analysis, the posterior probability that an intervention is superior (in the best regimen, see Section \@ref(best-treatment)) will be compared to a threshold of $0.99$.
+If this threshold is exceeded then a statistical decision of superiority will be made for the intervention and all other treatment options may be dropped from the set of active interventions in the domain (allocation probability set to 1 for the superior intervention).
 
 ```{r}
 tab <- tribble(
@@ -504,13 +569,13 @@ kable(tab, booktabs = T, escape = F, linesep = "",
 
 ## Inferiority
 
-At each analysis, the posterior probability that an intervention is superior (in the best regimen, see Section \@ref(best-treatment)) will be compared to a threshold of $0.01/(K_d-1)$.
-If this threshold is not exceeded then a decision of inferiority may be made for the intervention and the treatment option may be dropped from the domain.
+At each analysis, the posterior probability that an intervention is superior (in the best regimen, see Section \@ref(best-treatment)) will be compared to a threshold of $0.01/(K_d^\prime-1)$.
+If this threshold is not exceeded then a statistical decision of inferiority will be made for the intervention and the treatment option may be dropped from the set of active interventions in the domain (allocation probability set to 0 for the inferior intervention).
 
 ```{r}
 tab <- tribble(
   ~ Decision, ~ Comparison, ~ Quantity, ~Threshold, ~Action,
-  "$d_k$ is inferior", "$d_k$ vs all $d$", "$\\varphi_{dk}$", "$<0.01/(K_d-1)$", "Drop $d_k$")
+  "$d_k$ is inferior", "$d_k$ vs all $d$", "$\\varphi_{dk}$", "$<0.01/(K_d^\\prime-1)$", "Drop $d_k$")
 kable(tab, booktabs = T, escape = F, linesep = "",
       caption = "Intervention inferior.") %>%
   kable_styling(latex_options = "HOLD_position")
@@ -519,9 +584,10 @@ kable(tab, booktabs = T, escape = F, linesep = "",
 
 ## Introducing Interventions
 
-When a new intervention is introduced into a domain, a run-in period will initiate fixed allocation probability of $1/\text{(number of active arms in domain)}$ until an initial sample size of at least 50 patients has been achieved. 
-Existing interventions in the domain will have their allocation probability rescaled to sum to $1 - 1/\text{(number of active arms in domain)}$.
-Once the initial sample size has been exceeded the new regimens associated with the introduced intervention will be included in the RAR with all other active arms.
+When a new intervention is introduced into a domain, a run-in period will initiate fixed allocation probability of $1/K_d^\prime$ where $K_d^\prime$ is the number of active interventions including the new one. 
+This will last until an initial sample size of at least 50 participants has been allocated to this intervention across all regimens.
+Existing interventions in the domain will have their RAR allocation probability rescaled to sum to $1 - 1/K_d^\prime$.
+Once the initial sample size has been exceeded the new intervention will be included in the RAR with all other active interventions.
 
 ## Model Deviations
 
@@ -529,9 +595,29 @@ The primary analysis model will be assessed for adequacy.
 Additional models (either simpler or more complex) may be investigated as part of checks of sensitivity, stability, and model fit.
 If any issues or concerns arise (for example, strong evidence of interactions across treatment domains), all changes or updates to the specified primary model will be documented and reported.
 
-\clearpage
+## Reporting
 
-# Data Storage, Transfer, and Analysis
+### Blinding
+
+When reporting the results of a statistical decision for a domain, the number allocated to each intervention and the number ineligible or for whom the domain was unavailable will be disclosed. There are other domains to which participants will have also been randomised. Due to the response adaptive randomisation, the allocation ratios to these other domains may be informative of the relative performance of these interventions. To maintain blinding to the results in the other domains, data on the proportion allocated to these other domain interventions will not be disclosed when reporting the baseline characteristics of participants in the reported domain.
+
+### Platform Conclusions
+
+When a statistical decision has been made this will be referred to the DSMB.
+Subject to review by the DSMB a platform conclusion may be declared.
+
+If a statistical decision of superiority of an intervention in a domain has occurred and upon review a platform conclusion is declared then at sites where the intervention is available the superior intervention will be allocated with probability 1 until a new intervention has been added to the domain. If the intervention is not available at a site then randomisation may continue to the non-superior interventions. 
+
+If a statistical decision of inferiority of an intervention in a domain has occurred and upon review a platform conclusion is declared then this intervention will have its allocation probability fixed to 0 and will be dropped from the set of currently active interventions within the domain.
+
+If a statistical decision of effectiveness of an intervention in a domain has occurred and upon review a platform conclusion is declared then at sites where the intervention is available, the allocation probability to the domain standard of care option will be set to zero. If the effective intervention is not available at a site, then randomisation to the domain standard of care may still be allowed.
+
+If a statistical decision of futility of an intervention in a domain has occurred and upon review a platform conclusion is declared of futility then this intervention would have its allocation probability fixed to 0 and will be dropped from the set of currently active interventions within the domain.
+
+In some instances, despite a statistical decision being reached and a platform conclusion declared the above actions may be delayed.
+For example, if an intervention is found futile but further information is of interest for secondary outcomes, randomisation could continue.
+
+
 
 
 \clearpage

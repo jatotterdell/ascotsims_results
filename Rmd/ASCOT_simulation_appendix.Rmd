@@ -1,5 +1,5 @@
 ---
-title: "ASCOT ADAPT Trial Simulation Appendix"
+title: "ASCOT ADAPT Trial Simulation Report"
 subtitle: "Version 0.1"
 date: "July 2020"
 output: 
@@ -23,7 +23,7 @@ header-includes:
   - \usepackage{fancyhdr}
   - \pagestyle{fancy}
   - \fancyhf{}
-  - \fancyhead[LO]{ASCOT ADAPT Simulation Appendix}
+  - \fancyhead[LO]{ASCOT ADAPT Simulation Report}
   - \fancyfoot[LO]{Version 0.1, July, 2020}
   - \fancyfoot[RO]{\thepage\ of \pageref{LastPage}}
   - \renewcommand{\headrulewidth}{0pt}
@@ -64,7 +64,7 @@ cbp2 <- c("#000000", "#E69F00", "#56B4E9", "#009E73",
     \begin{tabular}{lllp{5cm}}
     \hline
     Version & Date & Author & Description \\ \hline
-    0.1 & June 2020 & JT & Draft outline \\ 
+    0.1 & July 2020 & JT & Draft outline \\ 
     \hline
     \end{tabular}
 \end{center}
@@ -86,9 +86,9 @@ For full details of the analysis plan refer to the Statistical Analysis appendix
 
 ## Model
 
-The primary endpoint in the trial is survival free of advanced respiratory support at 28 days after randomisation. 
-This endpoint is binary and in these simulations a participants response is coded as 0 if they survived ventilation-free to 28 days and is 1 if they did not. 
-Therefore, a beneficial treatment is one which reduces the probability of the outcome.
+The primary endpoint in the trial is death from any cause or requirement of new intensive respiratory support (invasive or non-invasive ventilation) or vasopressor/inotropic support in the 28 days after randomisation. 
+This endpoint is binary and in these simulations a participants response is coded as 1 if they died or required new intensive respiratory support or vasopressor/inotropic support ventilation-free to 28 days and is 0 if they did not. 
+Therefore, a beneficial treatment is one which reduces the probability of response.
 The outcome is modelled by logistic regression and treatment effects are expressed in terms of their reduction in the log-odds of the outcome.
 
 ### Domains
@@ -318,9 +318,12 @@ The focus is on the probability of triggering each decision as the trial progres
 
 The global null scenario for domain A shows a probability of less than 0.2 of dropping the no treatment option (either due to inferiority or a treatment declared effective) by 5,000 participants enrolled.
 Each intervention option in the domain has less than 0.05 probability of having been declared effective by 5,000 participants enrolled (approx $0.04$).
+The global probability of dropping the standard care arm by 5,000 participants is approximately 0.2.
+
 There is moderate probability of deciding ineffective arms as futile by 5,000 participants enrolled (at least $0.4$ for each ineffective arm).
 As the trial progresses, the expected probability of receiving the no treatment option increases due to the probability of dropping active treatments for futility.
 Due to the changing allocation probabilities, the no treatment option has the highest median number assigned.
+The extra futility check of $A_5$ compared to $A_1$ and $A_2$ results in a high probability of futility for this intervention compared to the others.
 
 
 ```{r}
@@ -909,6 +912,20 @@ grid::grid.draw(g)
 
 ## Domain B (4 treatments)
 
+In this scenario a domain of four treatments under the following design is assumed
+$$
+ X_{B} = 
+\begin{blockarray}{ccccc}
+          & \beta_{B0} & \beta_{B1} & \beta_{B2} & \beta_{B3} \\
+\begin{block}{r(cccc)}
+      B_0 & 1 & 0 & 0 & 0 \\
+      B_1 & 0 & 1 & 0 & 0 \\
+      B_2 & 0 & 0 & 1 & 0 \\
+      B_3 & 0 & 0 & 0 & 1 \\
+\end{block}
+\end{blockarray}
+$$
+
 ### Global Null Scenario
 
 The global null scenario for domain A shows a probability of less than 0.15 of dropping the no treatment option (either due to inferiority or a treatment declared effective) by 5,000 participants enrolled.
@@ -990,7 +1007,7 @@ p <- res0$res_trt_intrm %>%
   summarise(m = mean(n_agg_enr_trt), med = median(n_agg_enr_trt), lb = quantile(n_agg_enr_trt, 0.25), ub = quantile(n_agg_enr_trt, 0.75)) %>%
   ungroup() %>%
   mutate(ss = res0$cfg$n_seq[[1]][interim],
-         treatment = paste0("A", str_sub(treatment, 2, 2))) %>%
+         treatment = paste0("B", str_sub(treatment, 2, 2))) %>%
   ggplot(., aes(ss, n_agg_enr_trt, group = ss)) +
   facet_grid(. ~ treatment) +
   geom_pointrange(aes(y = med, ymin = lb, ymax = ub), size = 0.15) +
@@ -1323,6 +1340,18 @@ grid::grid.draw(g)
 
 ## Domain C (2 treatments)
 
+In what follows, a domain of two treatments is considered under the following design
+$$
+ X_{C} = 
+\begin{blockarray}{ccc}
+          & \beta_{C0} & \beta_{C1} \\
+\begin{block}{r(cc)}
+      C_0 & 1 & 0 \\
+      C_1 & 0 & 1 \\
+\end{block}
+\end{blockarray}
+$$
+
 ### Global Null
 
 The global null scenario for domain C shows a probability of less than 0.06 of dropping the no treatment option (either due to inferiority or a treatment declared effective) by 5,000 participants enrolled.
@@ -1402,7 +1431,7 @@ p <- res0$res_trt_intrm %>%
   summarise(m = mean(n_agg_enr_trt), med = median(n_agg_enr_trt), lb = quantile(n_agg_enr_trt, 0.25), ub = quantile(n_agg_enr_trt, 0.75)) %>%
   ungroup() %>%
   mutate(ss = res0$cfg$n_seq[[1]][interim],
-         treatment = paste0("A", str_sub(treatment, 2, 2))) %>%
+         treatment = paste0("B", str_sub(treatment, 2, 2))) %>%
   ggplot(., aes(ss, n_agg_enr_trt, group = ss)) +
   facet_grid(. ~ treatment) +
   geom_pointrange(aes(y = med, ymin = lb, ymax = ub), size = 0.15) +
@@ -1567,3 +1596,394 @@ for (i in stript) {
 }
 grid::grid.draw(g)
 ```
+
+
+\clearpage
+
+<!-- ## Domain B (3 treatments) -->
+
+<!-- In this scenario a domain of three treatments under the following design is assumed -->
+<!-- $$ -->
+<!--  X_{B} =  -->
+<!-- \begin{blockarray}{cccc} -->
+<!--           & \beta_{B0} & \beta_{B1} & \beta_{B2} \\ -->
+<!-- \begin{block}{r(ccc)} -->
+<!--       B_0 & 1 & 0 & 0 \\ -->
+<!--       B_1 & 0 & 1 & 0 \\ -->
+<!--       B_2 & 0 & 1 & 1 \\ -->
+<!-- \end{block} -->
+<!-- \end{blockarray} -->
+<!-- $$ -->
+
+<!-- ### Global Null -->
+
+<!-- ```{r} -->
+<!-- res0 <- readRDS("~/out_files/ascot/ascot_sims4/null.rds") -->
+<!-- ``` -->
+
+
+<!-- ```{r, fig.cap="Probability of decision for domain B treatments as trial progresses."} -->
+<!-- p <- res0$res_trial %>% -->
+<!--   unnest(data) %>% -->
+<!--   filter(grepl("b", treatment)) %>% -->
+<!--   group_by(treatment) %>%  -->
+<!--   select(ends_with("at")) %>% -->
+<!--   gather(key, value, -treatment) %>% -->
+<!--   group_by(treatment, key) %>% -->
+<!--   count(value) %>%  -->
+<!--   ungroup() %>% -->
+<!--   complete(treatment, key, value, fill = list(n = 0)) %>% -->
+<!--   group_by(treatment, key) %>% -->
+<!--   mutate(p = n / sum(n), cp = cumsum(p)) %>% -->
+<!--   ungroup() %>% -->
+<!--   filter(!is.na(value)) %>% -->
+<!--   mutate( -->
+<!--     ss = res0$cfg$n_seq[[1]][value], -->
+<!--     domain = paste("Domain:", toupper(str_sub(treatment, 1, 1))), -->
+<!--     treatment = paste0("B", str_sub(treatment, 2, 2)), -->
+<!--     decision = factor( -->
+<!--       key, -->
+<!--       levels = c("trig_eff_at", "trig_sup_at", "trig_ineff_at", "trig_inf_at",  -->
+<!--                  "trig_fut_at", "trig_equ_at", "trig_drop_at"), -->
+<!--       labels = c("Effective", "Superior", "Harmful", "Inferior", "Futile", "Equivalent", "Drop"))) %>%  -->
+<!--   ggplot(., aes(ss, p)) + -->
+<!--   facet_wrap( ~ fct_inorder(treatment)) + -->
+<!--   # geom_bar(stat = 'identity') + -->
+<!--   geom_line(aes(y = cp, colour = decision)) + -->
+<!--   scale_colour_manual("Decision", values = cbp2) + -->
+<!--   labs(x = "Total trial sample size", y = "Probability") + -->
+<!--   ylim(0, NA) + -->
+<!--   theme(legend.position = "top", -->
+<!--         axis.text.x = element_text(angle = 45, hjust = 1)) -->
+<!-- p -->
+<!-- ``` -->
+
+
+
+<!-- ```{r, fig.cap="Expected allocation probability in domain B treatments as trial progresses.", fig.height=3} -->
+<!-- res0$res_trt_intrm %>% -->
+<!--   unnest(data) %>% -->
+<!--   bind_rows(res0$res_trt %>% filter(config == 2) %>% unnest(data)) %>% -->
+<!--   filter(grepl("b", treatment)) %>% -->
+<!--   group_by(interim, treatment) %>% -->
+<!--   summarise(p = mean(p_rand_trt)) %>% -->
+<!--   mutate(domain = paste("Domain:", toupper(str_sub(treatment, 1, 1))), -->
+<!--          treatment = paste0("B", str_sub(treatment, 2, 2))) %>%  -->
+<!--   ungroup(domain) %>% -->
+<!--   mutate(ss = res0$cfg$n_seq[[1]][interim], -->
+<!--          ref = 1/length(unique(treatment))) %>% -->
+<!--   ggplot(., aes(ss, p, group = treatment, colour = treatment)) + -->
+<!--   facet_grid(. ~ domain) + -->
+<!--   # geom_line() + -->
+<!--   geom_smooth(se = F, size = 0.5, method = 'loess') + -->
+<!--   geom_hline(aes(yintercept = ref), linetype = 2) + -->
+<!--   scale_colour_manual("Treatment", values = cbp2) + -->
+<!--   labs(x = "Total trial sample size", y = "Expected allocation probability", -->
+<!--        colour = "Treatment") + -->
+<!--   theme(legend.position = "top") + -->
+<!--   ylim(0, NA) -->
+<!-- ``` -->
+
+
+<!-- ```{r, fig.cap="Number assigned to each treatment.", fig.height=3} -->
+<!-- p <- res0$res_trt_intrm %>%  -->
+<!--   unnest(data) %>% -->
+<!--   filter(grepl("b", treatment)) %>% -->
+<!--   group_by(treatment, interim) %>%  -->
+<!--   select(n_agg_enr_trt) %>% -->
+<!--   summarise(m = mean(n_agg_enr_trt), med = median(n_agg_enr_trt), lb = quantile(n_agg_enr_trt, 0.25), ub = quantile(n_agg_enr_trt, 0.75)) %>% -->
+<!--   ungroup() %>% -->
+<!--   mutate(ss = res0$cfg$n_seq[[1]][interim], -->
+<!--          treatment = paste0("B", str_sub(treatment, 2, 2))) %>% -->
+<!--   ggplot(., aes(ss, n_agg_enr_trt, group = ss)) + -->
+<!--   facet_grid(. ~ treatment) + -->
+<!--   geom_pointrange(aes(y = med, ymin = lb, ymax = ub), size = 0.15) + -->
+<!--   labs(x = "Sample size", y = "Number assigned to treatment (median and IQR)") + -->
+<!--   theme(axis.text.x = element_text(angle = 45, hjust = 1)) -->
+<!-- p -->
+<!-- ``` -->
+
+
+<!-- ```{r, fig.cap="Probability of response as trial progresses.", fig.height=3} -->
+<!-- res0$res_trt_intrm %>% -->
+<!--   unnest(data) %>% -->
+<!--   bind_rows(res0$res_trt %>% unnest(data) %>% filter(config == 2)) %>% -->
+<!--   filter(grepl("c", treatment)) %>% -->
+<!--   group_by(interim, trial) %>% -->
+<!--   summarise(p = sum(y_agg_enr_trt) / sum(n_agg_enr_trt)) %>% -->
+<!--   ungroup() %>% -->
+<!--   mutate(ss = res0$cfg$n_seq[[1]][interim]) %>% -->
+<!--   ggplot(., aes(ss, p, group = ss)) + -->
+<!--   geom_violin() + -->
+<!--   geom_hline(yintercept = 0.2, linetype = 2) + -->
+<!--   # scale_colour_discrete(labels = exp(-sapply(res$cfg$b, `[`, 2))) + -->
+<!--   labs(x = "Total trial sample size", y = "Event proportion amongst recruited cohort") + -->
+<!--   ylim(0, NA) -->
+<!-- ``` -->
+
+<!-- \clearpage -->
+
+<!-- ### One treatment effective in combination -->
+
+
+<!-- ```{r} -->
+<!-- res <- readRDS("~/out_files/ascot/ascot_sims4/fin_eff_domB2.rds") -->
+<!-- res$res_trt %<>% ungroup() %>%  -->
+<!--   mutate(OR = c("1.10", paste0("1/", c('1.10','1.25','1.50')))) -->
+<!-- res$res_trt_intrm %<>% ungroup() %>%  -->
+<!--   mutate(OR = c("1.10", paste0("1/", c('1.10','1.25','1.50')))) -->
+<!-- res$res_trial %<>% ungroup() %>%  -->
+<!--   mutate(OR = c("1.10", paste0("1/", c('1.10','1.25','1.50')))) -->
+<!-- ``` -->
+
+
+<!-- ```{r, fig.cap="Probability of decision for domain B treatments as trial progresses (white facets are the affected treatments).", fig.height=6} -->
+<!-- p <- res$res_trial %>%  -->
+<!--   unnest(data) %>% -->
+<!--   filter(grepl("b", treatment)) %>% -->
+<!--   group_by(OR, treatment) %>%  -->
+<!--   select(ends_with("at")) %>% -->
+<!--   gather(key, value, -OR, -treatment) %>% -->
+<!--   group_by(OR, treatment, key) %>% -->
+<!--   count(value) %>%  -->
+<!--   ungroup() %>% -->
+<!--   complete(OR, treatment, key, value, fill = list(n = 0)) %>% -->
+<!--   group_by(OR, treatment, key) %>% -->
+<!--   mutate(p = n / sum(n), cp = cumsum(p)) %>% -->
+<!--   ungroup() %>% -->
+<!--   filter(!is.na(value)) %>% -->
+<!--   mutate( -->
+<!--     ss = res$cfg$n_seq[[1]][value], -->
+<!--     domain = paste("Domain:", toupper(str_sub(treatment, 1, 1))), -->
+<!--     treatment = paste0("B", str_sub(treatment, 2, 2)), -->
+<!--     decision = factor( -->
+<!--       key, -->
+<!--       levels = c("trig_eff_at", "trig_sup_at", "trig_ineff_at", "trig_inf_at",  -->
+<!--                  "trig_fut_at", "trig_equ_at", "trig_drop_at"), -->
+<!--       labels = c("Effective", "Superior", "Harmful", "Inferior", "Futile", "Equivalent", "Drop"))) %>%  -->
+<!--   ggplot(., aes(ss, p)) + -->
+<!--   facet_grid(OR ~ fct_inorder(treatment)) + -->
+<!--   # geom_bar(stat = 'identity') + -->
+<!--   geom_line(aes(y = cp, colour = decision)) + -->
+<!--   scale_colour_manual("Decision", values = cbp2) + -->
+<!--   labs(x = "Total trial sample size", y = "Probability") + -->
+<!--   ylim(0, NA) + -->
+<!--   theme(legend.position = "top", -->
+<!--         axis.text.x = element_text(angle = 45, hjust = 1)) -->
+
+<!-- g <- ggplot_gtable(ggplot_build(p)) -->
+<!-- stript <- which(grepl('strip-t', g$layout$name)) -->
+<!-- fills <- c("grey85", "grey85", "white", "grey85") -->
+<!-- k <- 1 -->
+<!-- for (i in stript) { -->
+<!--   j <- which(grepl('rect', g$grobs[[i]]$grobs[[1]]$childrenOrder)) -->
+<!--   g$grobs[[i]]$grobs[[1]]$children[[j]]$gp$fill <- fills[k] -->
+<!--   k <- k+1 -->
+<!-- } -->
+<!-- grid::grid.draw(g) -->
+<!-- ``` -->
+
+
+
+<!-- ```{r, fig.cap="Expected allocation probability in domain B treatments as trial progresses."} -->
+<!-- res$res_trt_intrm %>% -->
+<!--   unnest(data) %>% -->
+<!--   filter(grepl("b", treatment)) %>% -->
+<!--   group_by(OR, interim, treatment) %>% -->
+<!--   summarise(p = mean(p_rand_trt)) %>% -->
+<!--   mutate(domain = paste("Domain:", toupper(str_sub(treatment, 1, 1))), -->
+<!--          treatment = paste0("B", str_sub(treatment, 2, 2))) %>%  -->
+<!--   ungroup() %>% -->
+<!--   mutate(ss = res$cfg$n_seq[[1]][interim], -->
+<!--          ref = 1/length(unique(treatment))) %>% -->
+<!--   ggplot(., aes(ss, p, group = treatment, colour = treatment)) + -->
+<!--   facet_wrap(~ OR) + -->
+<!--   geom_line() + -->
+<!--   # geom_smooth(se = F, size = 0.5, method = 'loess') + -->
+<!--   geom_hline(aes(yintercept = ref), linetype = 2) + -->
+<!--   scale_colour_manual("Treatment", values = cbp2) + -->
+<!--   labs(x = "Total trial sample size", y = "Expected allocation probability", -->
+<!--        colour = "Treatment") + -->
+<!--   theme(legend.position = "top") + -->
+<!--   ylim(0, NA) -->
+<!-- ``` -->
+
+
+<!-- ```{r, fig.cap="Probability of response as trial progresses."} -->
+<!-- res$res_trt_intrm %>% -->
+<!--   unnest(data) %>% -->
+<!--   filter(grepl("c", treatment)) %>% -->
+<!--   group_by(OR, interim, trial) %>% -->
+<!--   summarise(p = sum(y_agg_enr_trt) / sum(n_agg_enr_trt)) %>% -->
+<!--   ungroup() %>% -->
+<!--   mutate(ss = res$cfg$n_seq[[1]][interim]) %>% -->
+<!--   ggplot(., aes(ss, p, group = ss)) + -->
+<!--   facet_wrap( ~ OR) + -->
+<!--   geom_violin() + -->
+<!--   geom_hline(yintercept = 0.2, linetype = 2) + -->
+<!--   scale_colour_discrete(labels = exp(-sapply(res$cfg$b, `[`, 2))) + -->
+<!--   labs(x = "Total trial sample size", y = "Event probability amongst recruited cohort") + -->
+<!--   ylim(0, NA) -->
+<!-- ``` -->
+
+
+<!-- ```{r, fig.cap="Number assigned to each treatment.", fig.height=6} -->
+<!-- p <- res$res_trt_intrm %>%  -->
+<!--   unnest(data) %>% -->
+<!--   filter(grepl("b", treatment)) %>% -->
+<!--   group_by(OR, treatment, interim) %>%  -->
+<!--   select(n_agg_enr_trt) %>% -->
+<!--   summarise(m = mean(n_agg_enr_trt), med = median(n_agg_enr_trt), lb = quantile(n_agg_enr_trt, 0.25), ub = quantile(n_agg_enr_trt, 0.75)) %>% -->
+<!--   ungroup() %>% -->
+<!--   mutate(ss = res$cfg$n_seq[[1]][interim], -->
+<!--          treatment = paste0("B", str_sub(treatment, 2, 2))) %>% -->
+<!--   ggplot(., aes(ss, n_agg_enr_trt, group = ss)) + -->
+<!--   facet_grid(OR ~ treatment) + -->
+<!--   geom_pointrange(aes(y = med, ymin = lb, ymax = ub), size = 0.15) + -->
+<!--   labs(x = "Sample size", y = "Number assigned to treatment (median and IQR)") + -->
+<!--   theme(axis.text.x = element_text(angle = 45, hjust = 1)) -->
+
+<!-- g <- ggplot_gtable(ggplot_build(p)) -->
+<!-- stript <- which(grepl('strip-t', g$layout$name)) -->
+<!-- fills <- c("grey85", "white", "grey85", "grey85") -->
+<!-- k <- 1 -->
+<!-- for (i in stript) { -->
+<!--   j <- which(grepl('rect', g$grobs[[i]]$grobs[[1]]$childrenOrder)) -->
+<!--   g$grobs[[i]]$grobs[[1]]$children[[j]]$gp$fill <- fills[k] -->
+<!--   k <- k+1 -->
+<!-- } -->
+<!-- grid::grid.draw(g) -->
+<!-- ``` -->
+
+<!-- \clearpage -->
+
+<!-- ### One treatment effective alone and in combination -->
+
+<!-- ```{r} -->
+<!-- res <- readRDS("~/out_files/ascot/ascot_sims4/fin_eff_domB.rds") -->
+<!-- res$res_trt %<>% ungroup() %>%  -->
+<!--   mutate(OR = c("1.10", paste0("1/", c('1.10','1.25','1.50')))) -->
+<!-- res$res_trt_intrm %<>% ungroup() %>%  -->
+<!--   mutate(OR = c("1.10", paste0("1/", c('1.10','1.25','1.50')))) -->
+<!-- res$res_trial %<>% ungroup() %>%  -->
+<!--   mutate(OR = c("1.10", paste0("1/", c('1.10','1.25','1.50')))) -->
+<!-- ``` -->
+
+
+<!-- ```{r, fig.cap="Probability of decision for domain B treatments as trial progresses (white facets are the affected treatments).", fig.height=6} -->
+<!-- p <- res$res_trial %>%  -->
+<!--   unnest(data) %>% -->
+<!--   filter(grepl("b", treatment)) %>% -->
+<!--   group_by(OR, treatment) %>%  -->
+<!--   select(ends_with("at")) %>% -->
+<!--   gather(key, value, -OR, -treatment) %>% -->
+<!--   group_by(OR, treatment, key) %>% -->
+<!--   count(value) %>%  -->
+<!--   ungroup() %>% -->
+<!--   complete(OR, treatment, key, value, fill = list(n = 0)) %>% -->
+<!--   group_by(OR, treatment, key) %>% -->
+<!--   mutate(p = n / sum(n), cp = cumsum(p)) %>% -->
+<!--   ungroup() %>% -->
+<!--   filter(!is.na(value)) %>% -->
+<!--   mutate( -->
+<!--     ss = res$cfg$n_seq[[1]][value], -->
+<!--     domain = paste("Domain:", toupper(str_sub(treatment, 1, 1))), -->
+<!--     treatment = paste0("B", str_sub(treatment, 2, 2)), -->
+<!--     decision = factor( -->
+<!--       key, -->
+<!--       levels = c("trig_eff_at", "trig_sup_at", "trig_ineff_at", "trig_inf_at",  -->
+<!--                  "trig_fut_at", "trig_equ_at", "trig_drop_at"), -->
+<!--       labels = c("Effective", "Superior", "Harmful", "Inferior", "Futile", "Equivalent", "Drop"))) %>%  -->
+<!--   ggplot(., aes(ss, p)) + -->
+<!--   facet_grid(OR ~ fct_inorder(treatment)) + -->
+<!--   # geom_bar(stat = 'identity') + -->
+<!--   geom_line(aes(y = cp, colour = decision)) + -->
+<!--   scale_colour_manual("Decision", values = cbp2) + -->
+<!--   labs(x = "Total trial sample size", y = "Probability") + -->
+<!--   ylim(0, NA) + -->
+<!--   theme(legend.position = "top", -->
+<!--         axis.text.x = element_text(angle = 45, hjust = 1)) -->
+
+<!-- g <- ggplot_gtable(ggplot_build(p)) -->
+<!-- stript <- which(grepl('strip-t', g$layout$name)) -->
+<!-- fills <- c("grey85", "white", "white", "grey85") -->
+<!-- k <- 1 -->
+<!-- for (i in stript) { -->
+<!--   j <- which(grepl('rect', g$grobs[[i]]$grobs[[1]]$childrenOrder)) -->
+<!--   g$grobs[[i]]$grobs[[1]]$children[[j]]$gp$fill <- fills[k] -->
+<!--   k <- k+1 -->
+<!-- } -->
+<!-- grid::grid.draw(g) -->
+<!-- ``` -->
+
+
+
+<!-- ```{r, fig.cap="Expected allocation probability in domain B treatments as trial progresses."} -->
+<!-- res$res_trt_intrm %>% -->
+<!--   unnest(data) %>% -->
+<!--   filter(grepl("b", treatment)) %>% -->
+<!--   group_by(OR, interim, treatment) %>% -->
+<!--   summarise(p = mean(p_rand_trt)) %>% -->
+<!--   mutate(domain = paste("Domain:", toupper(str_sub(treatment, 1, 1))), -->
+<!--          treatment = paste0("B", str_sub(treatment, 2, 2))) %>%  -->
+<!--   ungroup() %>% -->
+<!--   mutate(ss = res$cfg$n_seq[[1]][interim], -->
+<!--          ref = 1/length(unique(treatment))) %>% -->
+<!--   ggplot(., aes(ss, p, group = treatment, colour = treatment)) + -->
+<!--   facet_wrap(~ OR) + -->
+<!--   geom_line() + -->
+<!--   # geom_smooth(se = F, size = 0.5, method = 'loess') + -->
+<!--   geom_hline(aes(yintercept = ref), linetype = 2) + -->
+<!--   scale_colour_manual("Treatment", values = cbp2) + -->
+<!--   labs(x = "Total trial sample size", y = "Expected allocation probability", -->
+<!--        colour = "Treatment") + -->
+<!--   theme(legend.position = "top") + -->
+<!--   ylim(0, NA) -->
+<!-- ``` -->
+
+
+<!-- ```{r, fig.cap="Probability of response as trial progresses."} -->
+<!-- res$res_trt_intrm %>% -->
+<!--   unnest(data) %>% -->
+<!--   filter(grepl("c", treatment)) %>% -->
+<!--   group_by(OR, interim, trial) %>% -->
+<!--   summarise(p = sum(y_agg_enr_trt) / sum(n_agg_enr_trt)) %>% -->
+<!--   ungroup() %>% -->
+<!--   mutate(ss = res$cfg$n_seq[[1]][interim]) %>% -->
+<!--   ggplot(., aes(ss, p, group = ss)) + -->
+<!--   facet_wrap( ~ OR) + -->
+<!--   geom_violin() + -->
+<!--   geom_hline(yintercept = 0.2, linetype = 2) + -->
+<!--   scale_colour_discrete(labels = exp(-sapply(res$cfg$b, `[`, 2))) + -->
+<!--   labs(x = "Total trial sample size", y = "Event probability amongst recruited cohort") + -->
+<!--   ylim(0, NA) -->
+<!-- ``` -->
+
+
+<!-- ```{r, fig.cap="Number assigned to each treatment.", fig.height=6} -->
+<!-- p <- res$res_trt_intrm %>%  -->
+<!--   unnest(data) %>% -->
+<!--   filter(grepl("b", treatment)) %>% -->
+<!--   group_by(OR, treatment, interim) %>%  -->
+<!--   select(n_agg_enr_trt) %>% -->
+<!--   summarise(m = mean(n_agg_enr_trt), med = median(n_agg_enr_trt), lb = quantile(n_agg_enr_trt, 0.25), ub = quantile(n_agg_enr_trt, 0.75)) %>% -->
+<!--   ungroup() %>% -->
+<!--   mutate(ss = res$cfg$n_seq[[1]][interim], -->
+<!--          treatment = paste0("B", str_sub(treatment, 2, 2))) %>% -->
+<!--   ggplot(., aes(ss, n_agg_enr_trt, group = ss)) + -->
+<!--   facet_grid(OR ~ treatment) + -->
+<!--   geom_pointrange(aes(y = med, ymin = lb, ymax = ub), size = 0.15) + -->
+<!--   labs(x = "Sample size", y = "Number assigned to treatment (median and IQR)") + -->
+<!--   theme(axis.text.x = element_text(angle = 45, hjust = 1)) -->
+
+<!-- g <- ggplot_gtable(ggplot_build(p)) -->
+<!-- stript <- which(grepl('strip-t', g$layout$name)) -->
+<!-- fills <- c("grey85", "white", "grey85", "grey85") -->
+<!-- k <- 1 -->
+<!-- for (i in stript) { -->
+<!--   j <- which(grepl('rect', g$grobs[[i]]$grobs[[1]]$childrenOrder)) -->
+<!--   g$grobs[[i]]$grobs[[1]]$children[[j]]$gp$fill <- fills[k] -->
+<!--   k <- k+1 -->
+<!-- } -->
+<!-- grid::grid.draw(g) -->
+<!-- ``` -->
