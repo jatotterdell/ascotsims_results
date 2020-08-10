@@ -52,9 +52,8 @@ library(kableExtra)
 \begin{center}
     \begin{tabular}{lllp{5cm}}
     \hline
-    Version & Date & Author & Description \\ \hline
-    0.1 & July 2020 & JT & Draft outline \\ 
-    0.2 & August 2020 & JT & Update to align with core protocol and incorporate comments from SWG \\ 
+    Version & Date & Summary \\ \hline
+    1.0 & August 2020 & Statistical analysis plan ASCOT ADPAT \\
     \hline
     \end{tabular}
 \end{center}
