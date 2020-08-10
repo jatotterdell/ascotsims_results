@@ -1,7 +1,7 @@
 ---
 title: "ASCOT ADAPT Statistical Analysis Appendix"
 subtitle: "Australasian-India COVID-19 Trial Adaptive Platform Trial"
-date: "August 2020 - Version 0.2"
+date: "August 2020 - Version 1.0"
 output: 
   bookdown::pdf_document2:
     toc: true
@@ -28,7 +28,7 @@ header-includes:
   - \pagestyle{fancy}
   - \fancyhf{}
   - \fancyhead[LO]{ASCOT ADAPT Statistical Appendix}
-  - \fancyfoot[LO]{Version 0.2, August, 2020}
+  - \fancyfoot[LO]{Version 1.0, August, 2020}
   - \fancyfoot[RO]{\thepage\ of \pageref{LastPage}}
   - \renewcommand{\headrulewidth}{0pt}
   - \renewcommand{\footrulewidth}{0pt}
@@ -137,7 +137,7 @@ For any particular regimen $j$, the notation $d(j)$ will refer to the interventi
 Standard of care will vary between regions and sites, and over the course of the trial. 
 At the time of writing, it is likely to include low-dose dexamethasone (6mg daily IV or PO for 10 days) in all patients requiring supplemental oxygen, and remdesivir in those regions/sites where it is available, again for patients requiring supplemental oxygen. 
 Standard of care is not dictated by the core protocol, but data will be collected on any agents used as standard and adjusted for in the statistical model where deemed relevant.
-Currently, adjustment will be made for dexamethasone and remdesivir.
+Currently, adjustment will be made for corticosteroids and remdesivir.
 
 
 ## Subgroups
@@ -145,23 +145,28 @@ Currently, adjustment will be made for dexamethasone and remdesivir.
 Treatment effect heterogeneity will be explored for the following variables as measured at baseline across all domains:
 
   * country/region
-  * days since symptom onset: $\leq 7$ days or $> 7$ days
-  * severity of illness: required supplemental oxygen at time of randomisation or oxygen saturation less than 94% at room air
-  * age: $<65$ years of age or $\geq 65$ years of age
-  * standard of care: receiving remdesivir prior to randomisation or will be provided as part of care
-  * standard of care: receiving dexamethasone prior to randomisation or to be provided as part of care
+  * days since symptom onset $\leq 7$ days or $> 7$ days
+  * required supplemental oxygen at time of randomisation or oxygen saturation less than 94% at room air
+  * $<60$ years of age or $\geq 60$ years of age
+  * receipt of remdesivir at time of randomisation
+  * receipt corticosteroid at time of randomisation
+  * receipt of any other agent intended to be an antiviral agent against SARS-CoV-2
+  * participants receiving ACE inhibitor/ATII blocker therapy at the time of presentation
 
 Other domain-specific subgroup analyses may be specified in the domain appendices.
 Any other subgroup analyses will be post-hoc and reported as such.
 
 ## Randomisation
 
-Patients are randomised to regimens which consist of one treatment from each domain.
-Initially, all treatments within a domain and therefore all regimens will be allocated with equal probability.
-Participants will only be randomised to regimens comprising treatments for which they are eligible and treatments which are available at the site they are enrolled.
+Patients are randomised to regimens which consist of one intervention from each domain.
+Initially, all interventions within a domain and therefore all regimens will be allocated with equal probability.
+Participants will only be randomised to regimens comprising interventions for which they are eligible and interventions which are available at the time of enrolment.
 
-Response adaptive randomisation will be used to update the allocation ratios following each sequential analysis.
-The standard of care option within each domain will have a fixed allocation of $1/K^\prime_d$ where $K^\prime_d$ is the number of active interventions in the domain.
+Following an analysis, some interventions in a domain may have been dropped, or new interventions added.
+Interventions in a domain with non-zero randomisation probability (including standard of care) will be referred to as the actively allocated interventions.
+
+Response adaptive randomisation will be used to update the allocation ratios to the actively allocated interventions following each sequential analysis.
+The standard of care option within each domain will have a fixed allocation of $1/K^\prime_d$ where $K^\prime_d$ is the number of actively allocated interventions in the domain.
 
 # Endpoints and Estimands
 
@@ -251,7 +256,7 @@ The primary analysis population will include all participants who were randomise
 This analysis set will follow the intention-to-treat (ITT) principle (treatment-policy estimand) in that all randomised patients will be included and analysed according to the regimen to which they were initially allocated irrespective of any deviations from this regimen or any other protocol deviations. This analysis population will inform the primary estimand.
 
 A secondary analysis population will include all participants who are randomised to at least one of the interventions.
-However, this analysis set will follow the per-protocol (PP) definition with randomised patients included in the analysis only if no protocol deviations occurred prior to the primary endpoint.
+However, this analysis set will follow the per-protocol (PP) definition with randomised patients included in the analysis only if no protocol deviations occurred prior to the endpoint.
 
 ## Primary Model
 
@@ -409,11 +414,11 @@ The participant will be included in the primary analysis as long as they are eli
 A covariate will indicate ineligibility for each domain to account for possible association between participant factors determining domain ineligibility and the primary outcome.
 
 At the time of enrolment, a participant may be eligible for all domains, but ineligible for certain interventions within some domains.
-If a participant is ineligible for any active interventions (but eligible for an inactive) in the domain then they will be treated as ineligible for the domain itself.
-If a participant is only eligible for one active intervention, then the participant may receive it, however they will be treated as ineligible for the domain itself.
-If a participant is eligible for at least two active interventions, the participant will be randomised amongst those eligible interventions and treated as eligible for the domain.
-The participant will be included in the primary analysis and a covariate indicating their treatment specific ineligibility will be included to account for possible associations between participant factors determining ineligibility for a particular intervention and the outcome.
-Each intervention in will have it's own ineligibility effect where necessary.
+If a participant is ineligible for any actively allocated interventions (but eligible for an inactive intervention) in the domain then they will be treated as ineligible for the domain itself.
+If a participant is only eligible for one actively allocated intervention, then the participant may receive it, however they will be treated as ineligible for the domain itself.
+If a participant is eligible for at least two actively allocated interventions, the participant will be randomised amongst those eligible interventions and treated as eligible for the domain.
+The participant will be included in the primary analysis and a covariate indicating their intervention specific ineligibility will be included to account for possible associations between participant factors determining ineligibility for a particular intervention and the outcome.
+Each intervention will have it's own ineligibility effect where necessary.
 
 If a domain is unavailable at the time of randomisation, then the participant will be categorised as ineligible.
 If an intervention is unavailable at a site at the time of a participants randomisation, then that participant will be treated as ineligible for the intervention and randomised to the available interventions in the domain so long as there is more than one available.
@@ -437,10 +442,12 @@ Missing covariate information may be imputed based on other available data (e.g.
 Sensitivity analyses may include applying the same model to a different analysis population or varying the primary model.
 In particular, the following sensitivity analyses will be explored:
 
-* the per-protocol analysis
+* the per-protocol analysis.
 * separate models fit to domain eligible subsets: for example, for each domain sensitivity analyses will restrict to only those participants who were eligible for the domain and only participants who were eligible for all interventions in the domain.
 * sensitivity of the results to the choice of priors: allowing priors to be less or more informative than those specified in this SAP.
 * method of handling missing primary outcome data, e.g. complete-case analysis, worst-case, or best-case scenarios.
+* varying the assumption made for the primary endpoint regarding participants who discharged against medical advice.
+
 
 # Statistical Quantities
 
