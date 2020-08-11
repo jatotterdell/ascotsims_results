@@ -12,6 +12,7 @@ output:
 bibliography: ascot_adapt.bib
 biblio-style: "apalike"
 link-citations: true
+csl: elsevier-harvard.csl
 header-includes:
   - \usepackage{booktabs}
   - \usepackage{blkarray}
