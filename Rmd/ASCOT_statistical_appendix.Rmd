@@ -9,30 +9,13 @@ output:
     fig_height: 4
     fig_width: 6
     latex_engine: xelatex
+    keep_tex: true
+    includes:
+      in_header: preamble.tex
+fontsize: 11pt
 bibliography: ascot_adapt.bib
-biblio-style: "apalike"
 link-citations: true
 csl: elsevier-harvard.csl
-header-includes:
-  - \usepackage{booktabs}
-  - \usepackage{blkarray}
-  - \usepackage{pdflscape}
-  - \usepackage{lastpage}
-  - \usepackage{vhistory}
-  - \usepackage{titling}
-  - \pretitle{\begin{center}
-    \includegraphics[width=2in,height=2in]{../image.jpg}\LARGE\\}
-  - \posttitle{\end{center}}
-  - \newcommand{\blandscape}{\begin{landscape}}
-  - \newcommand{\elandscape}{\end{landscape}}
-  - \usepackage{fancyhdr}
-  - \pagestyle{fancy}
-  - \fancyhf{}
-  - \fancyhead[LO]{ASCOT ADAPT Statistical Appendix}
-  - \fancyfoot[LO]{Version 1.0, August, 2020}
-  - \fancyfoot[RO]{\thepage\ of \pageref{LastPage}}
-  - \renewcommand{\headrulewidth}{0pt}
-  - \renewcommand{\footrulewidth}{0pt}
 ---
 
 ```{r setup, include=FALSE}
@@ -226,8 +209,8 @@ Baseline covariates which will be part of the primary analyses include:
 * country/region
 * site
 * time of enrolment
-* age $\geq 65$ years
-* severity of illness: required supplemental oxygen at time of randomisation or oxygen saturation less than 94% at room air
+* age $<60$ or $\geq 60$ years
+* required supplemental oxygen at time of randomisation or oxygen saturation less than 94% at room air.
 
 
 ## Estimands
@@ -546,10 +529,10 @@ kable(tab, booktabs = T, escape = F, linesep = "",
 
 ## Futility
 
-At each analysis, the posterior probability that an intervention is futile (insufficiently better than standard of care, see Section \@ref(treatment-contrasts) or insufficiently better than another reference treatment) will be compared to a threshold of 0.95.
+At each analysis, the posterior probability that an intervention is futile (insufficiently better than standard of care, see Section \@ref(treatment-contrasts) or insufficiently better than another reference treatment) with respect to a reference effect size of $\log(1.1)$ will be compared to a threshold of 0.95.
 If this threshold is exceeded then a statistical decision of futility will be made for the intervention and the treatment option may be dropped from the set of active interventions in the domain (allocation probability set to 0 for the futile intervention).
 
-The two contrasts of primary interest are the comparison of each treatment with the reference treatment $(\psi_{k1}(\Delta))$, and where relevant, the comparison of combination of within domain treatments versus either given alone. For example, if treatment option $l$ is the combination of treatment options $k_1$ and $k_2$ given together then the contrasts $\psi_{l,k_1}^d(-\log(1.1))$ and $\psi_{l,k_2}^d(-\log(1.1))$ may be of interest as additional futility checks for intervention $l$.
+The two contrasts of primary interest are the comparison of each treatment with the reference treatment $(\psi_{k1}(-\log(1.1))$, and where relevant, the comparison of combination of within domain treatments versus either given alone. For example, if treatment option $l$ is the combination of treatment options $k_1$ and $k_2$ given together then the contrasts $\psi_{l,k_1}^d(-\log(1.1))$ and $\psi_{l,k_2}^d(-\log(1.1))$ may be of interest as additional futility checks for intervention $l$.
 
 ```{r}
 tab <- tribble(
@@ -610,8 +593,7 @@ When reporting the results of a statistical decision for a domain, the number al
 
 ### Platform Conclusions
 
-When a statistical decision has been made this will be referred to the DSMB.
-Subject to review by the DSMB a platform conclusion may be declared.
+When a statistical decision has been made a platform conclusion may be declared following review of the data, analysis and results.
 
 If a statistical decision of superiority of an intervention in a domain has occurred and upon review a platform conclusion is declared then at sites where the intervention is available the superior intervention will be allocated with probability 1 until a new intervention has been added to the domain. If the intervention is not available at a site then randomisation may continue to the non-superior interventions. 
 
@@ -623,9 +605,6 @@ If a statistical decision of futility of an intervention in a domain has occurre
 
 In some instances, despite a statistical decision being reached and a platform conclusion declared the above actions may be delayed.
 For example, if an intervention is found futile but further information is of interest for secondary outcomes, randomisation could continue.
-
-
-
 
 \clearpage
 
