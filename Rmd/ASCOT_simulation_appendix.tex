@@ -145,10 +145,11 @@
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
 
-This document is an appendix to the ASCOT ADAPT trial core protocol.
-It details the technical details of the clinical trial simulations and results used in planning the ASCOT ADAPT trial decision thresholds.
+This document is a supplement to the ASCOT ADAPT trial core protocol.
+It outlines the technical details of the clinical trial simulations and results used in planning the ASCOT ADAPT trial decision thresholds.
 The simulations are used to understand the operating characteristics of the platform trial under various design configurations.
-For full details of the analysis plan refer to the Statistical Analysis appendix.
+This is a living document where trial scenarios or trial summaries may be added as required.
+For full details of the analysis plan refer to the Statistical Analysis Appendix.
 
 \clearpage
 
@@ -267,7 +268,7 @@ Define the probability that a treatment combination within each domain \(A\), \(
 
 \textbf{Treatment Comparisons}
 
-Define the probability that a treatment combination has a lower log-odds of the outcome than another treatment combination combination by
+Define the probability that a treatment combination has a lower log-odds of the outcome than another treatment combination by
 \[
 \begin{aligned}
 \mathbb P[\text{treatment }A_k\text{ better than treatment } A_l] &=\mathbb P\left[x_{A(k)}^{\mathsf{T}}\beta_A < x_{A(l)}^{\mathsf{T}}\beta_A\right],\quad k,l\in\{0,1,2,3,4,5\} \\
@@ -417,6 +418,22 @@ The focus is on the probability of triggering each decision as the trial progres
 \hypertarget{domain-a-6-treatments-with-one-combination}{%
 \subsection{Domain A (6 treatments with one combination)}\label{domain-a-6-treatments-with-one-combination}}
 
+In this scenario a domain of six treatments under the following design is assumed
+\[
+ X_{B} = 
+\begin{blockarray}{ccccccc}
+          & \beta_{A0} & \beta_{A1} & \beta_{A2} & \beta_{A3} & \beta_{A4} & \beta_{A5} \\
+\begin{block}{r(cccccc)}
+      A_0 & 1 & 0 & 0 & 0 & 0 & 0 \\
+      A_1 & 0 & 1 & 0 & 0 & 0 & 0 \\
+      A_2 & 0 & 0 & 1 & 0 & 0 & 0 \\
+      A_3 & 0 & 0 & 0 & 1 & 0 & 0 \\
+      A_4 & 0 & 0 & 0 & 0 & 1 & 0 \\
+      A_5 & 0 & 1 & 1 & 0 & 0 & 1 \\
+\end{block}
+\end{blockarray}
+\]
+
 \hypertarget{global-null-scenario}{%
 \subsubsection{Global Null Scenario}\label{global-null-scenario}}
 
@@ -437,20 +454,20 @@ The extra futility check of \(A_5\) compared to \(A_1\) and \(A_2\) results in a
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-3-1.pdf}
-\caption{\label{fig:unnamed-chunk-3}Expected allocation probability in domain A treatments as trial progresses.}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-4-1.pdf}
-\caption{\label{fig:unnamed-chunk-4}Number assigned to each treatment.}
-\end{figure}
-
-\begin{figure}
-\centering
 \includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-5-1.pdf}
-\caption{\label{fig:unnamed-chunk-5}Probability of response as trial progresses.}
+\caption{\label{fig:unnamed-chunk-5}Expected allocation probability in domain A treatments as trial progresses.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-6-1.pdf}
+\caption{\label{fig:unnamed-chunk-6}Number assigned to each treatment.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-7-1.pdf}
+\caption{\label{fig:unnamed-chunk-7}Probability of response as trial progresses.}
 \end{figure}
 
 \clearpage
@@ -467,8 +484,14 @@ Figures \ref{fig:fig6} and \ref{fig:fig7} show the expected allocation probabili
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-7-1.pdf}
-\caption{\label{fig:unnamed-chunk-7}Probability of decision for domain A treatments as trial progresses (white facets are the affected treatments).}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-9-1.pdf}
+\caption{\label{fig:unnamed-chunk-9}Probability of decision for domain A treatments as trial progresses (white facets are the affected treatments).}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-10-1.pdf}
+\caption{\label{fig:unnamed-chunk-10}Expected posterior probability treatment in domain A is effective as trial progresses.}
 \end{figure}
 
 \begin{figure}
@@ -485,8 +508,8 @@ Figures \ref{fig:fig6} and \ref{fig:fig7} show the expected allocation probabili
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-8-1.pdf}
-\caption{\label{fig:unnamed-chunk-8}Number assigned to each treatment.}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-12-1.pdf}
+\caption{\label{fig:unnamed-chunk-12}Number assigned to each treatment.}
 \end{figure}
 
 \clearpage
@@ -504,26 +527,32 @@ The probability of dropping at least one of \(A_3\) or \(A_4\) is 0.07 by 5,000 
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-13-1.pdf}
-\caption{\label{fig:unnamed-chunk-13}Probability of decision for domain A treatments as trial progresses (white facets are the affected treatments).}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-17-1.pdf}
+\caption{\label{fig:unnamed-chunk-17}Probability of decision for domain A treatments as trial progresses (white facets are the affected treatments).}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-14-1.pdf}
-\caption{\label{fig:unnamed-chunk-14}Expected allocation probability in domain A treatments as trial progresses. Affected treatments are \(A_3, A_4\).}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-18-1.pdf}
+\caption{\label{fig:unnamed-chunk-18}Expected posterior probability treatment in domain A is effective as trial progresses.}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-15-1.pdf}
-\caption{\label{fig:unnamed-chunk-15}Probability of response as trial progresses. Reference line is response under SoC.}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-20-1.pdf}
+\caption{\label{fig:unnamed-chunk-20}Expected allocation probability in domain A treatments as trial progresses. Affected treatments are \(A_3, A_4\).}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-16-1.pdf}
-\caption{\label{fig:unnamed-chunk-16}Number assigned to each treatment.}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-21-1.pdf}
+\caption{\label{fig:unnamed-chunk-21}Probability of response as trial progresses. Reference line is response under SoC.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-22-1.pdf}
+\caption{\label{fig:unnamed-chunk-22}Number assigned to each treatment.}
 \end{figure}
 
 \clearpage
@@ -536,26 +565,32 @@ In such a situation, preference would be the selection of \(A_1\) over \(A_5\).
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-18-1.pdf}
-\caption{\label{fig:unnamed-chunk-18}Probability of decision for domain A treatments as trial progresses (white facets are the affected treatments).}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-24-1.pdf}
+\caption{\label{fig:unnamed-chunk-24}Probability of decision for domain A treatments as trial progresses (white facets are the affected treatments).}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-19-1.pdf}
-\caption{\label{fig:unnamed-chunk-19}Expected allocation probability in domain A treatments as trial progresses. Treatments \(A_1\) and \(A_5\) are equally effective.}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-25-1.pdf}
+\caption{\label{fig:unnamed-chunk-25}Expected posterior probability treatment in domain A is effective as trial progresses.}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-20-1.pdf}
-\caption{\label{fig:unnamed-chunk-20}Probability of response as trial progresses.}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-27-1.pdf}
+\caption{\label{fig:unnamed-chunk-27}Expected allocation probability in domain A treatments as trial progresses. Treatments \(A_1\) and \(A_5\) are equally effective.}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-21-1.pdf}
-\caption{\label{fig:unnamed-chunk-21}Number assigned to each treatment.}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-28-1.pdf}
+\caption{\label{fig:unnamed-chunk-28}Probability of response as trial progresses.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-29-1.pdf}
+\caption{\label{fig:unnamed-chunk-29}Number assigned to each treatment.}
 \end{figure}
 
 \clearpage
@@ -588,26 +623,26 @@ Due to the changing allocation probabilities, the no treatment option has the hi
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-22-1.pdf}
-\caption{\label{fig:unnamed-chunk-22}Probability of decision for domain B treatments as trial progresses.}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-30-1.pdf}
+\caption{\label{fig:unnamed-chunk-30}Probability of decision for domain B treatments as trial progresses.}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-23-1.pdf}
-\caption{\label{fig:unnamed-chunk-23}Expected allocation probability in domain B treatments as trial progresses.}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-32-1.pdf}
+\caption{\label{fig:unnamed-chunk-32}Expected allocation probability in domain B treatments as trial progresses.}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-24-1.pdf}
-\caption{\label{fig:unnamed-chunk-24}Number assigned to each treatment.}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-33-1.pdf}
+\caption{\label{fig:unnamed-chunk-33}Number assigned to each treatment.}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-25-1.pdf}
-\caption{\label{fig:unnamed-chunk-25}Probability of response as trial progresses.}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-34-1.pdf}
+\caption{\label{fig:unnamed-chunk-34}Probability of response as trial progresses.}
 \end{figure}
 
 \clearpage
@@ -624,26 +659,32 @@ When \(B_1\) reduces the odds of the outcome by a factor \(0.5\), the probabilit
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-27-1.pdf}
-\caption{\label{fig:unnamed-chunk-27}Probability of decision for domain B treatments as trial progresses (white facets are the affected treatments).}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-36-1.pdf}
+\caption{\label{fig:unnamed-chunk-36}Probability of decision for domain B treatments as trial progresses (white facets are the affected treatments).}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-28-1.pdf}
-\caption{\label{fig:unnamed-chunk-28}Expected allocation probability in domain B treatments as trial progresses.}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-37-1.pdf}
+\caption{\label{fig:unnamed-chunk-37}Expected posterior probability treatment in domain B is effective as trial progresses.}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-29-1.pdf}
-\caption{\label{fig:unnamed-chunk-29}Probability of response as trial progresses.}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-39-1.pdf}
+\caption{\label{fig:unnamed-chunk-39}Expected allocation probability in domain B treatments as trial progresses.}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-30-1.pdf}
-\caption{\label{fig:unnamed-chunk-30}Number assigned to each treatment.}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-40-1.pdf}
+\caption{\label{fig:unnamed-chunk-40}Probability of response as trial progresses.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-41-1.pdf}
+\caption{\label{fig:unnamed-chunk-41}Number assigned to each treatment.}
 \end{figure}
 
 \clearpage
@@ -663,26 +704,32 @@ The probability of dropping at least one of \(B_1\) or \(B_2\) is 0.08 by 5,000 
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-33-1.pdf}
-\caption{\label{fig:unnamed-chunk-33}Probability of decision for domain B treatments as trial progresses (white facets are the affected treatments).}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-44-1.pdf}
+\caption{\label{fig:unnamed-chunk-44}Probability of decision for domain B treatments as trial progresses (white facets are the affected treatments).}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-34-1.pdf}
-\caption{\label{fig:unnamed-chunk-34}Expected allocation probability in domain B treatments as trial progresses.}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-45-1.pdf}
+\caption{\label{fig:unnamed-chunk-45}Expected posterior probability treatment in domain B is effective as trial progresses.}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-35-1.pdf}
-\caption{\label{fig:unnamed-chunk-35}Probability of response as trial progresses.}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-47-1.pdf}
+\caption{\label{fig:unnamed-chunk-47}Expected allocation probability in domain B treatments as trial progresses.}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-36-1.pdf}
-\caption{\label{fig:unnamed-chunk-36}Number assigned to each treatment.}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-48-1.pdf}
+\caption{\label{fig:unnamed-chunk-48}Probability of response as trial progresses.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-49-1.pdf}
+\caption{\label{fig:unnamed-chunk-49}Number assigned to each treatment.}
 \end{figure}
 
 \clearpage
@@ -713,26 +760,26 @@ As the trial progresses, the expected probability of receiving the no treatment 
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-37-1.pdf}
-\caption{\label{fig:unnamed-chunk-37}Probability of decision for domain C treatments as trial progresses.}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-50-1.pdf}
+\caption{\label{fig:unnamed-chunk-50}Probability of decision for domain C treatments as trial progresses.}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-38-1.pdf}
-\caption{\label{fig:unnamed-chunk-38}Expected allocation probability in domain C treatments as trial progresses.}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-53-1.pdf}
+\caption{\label{fig:unnamed-chunk-53}Expected allocation probability in domain C treatments as trial progresses.}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-39-1.pdf}
-\caption{\label{fig:unnamed-chunk-39}Number assigned to each treatment.}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-54-1.pdf}
+\caption{\label{fig:unnamed-chunk-54}Number assigned to each treatment.}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-40-1.pdf}
-\caption{\label{fig:unnamed-chunk-40}Probability of response as trial progresses.}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-55-1.pdf}
+\caption{\label{fig:unnamed-chunk-55}Probability of response as trial progresses.}
 \end{figure}
 
 \clearpage
@@ -747,26 +794,32 @@ When \(C_1\) reduces the odds of the outcome by \(1/1.25\), the probability of d
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-42-1.pdf}
-\caption{\label{fig:unnamed-chunk-42}Probability of decision for domain C treatments as trial progresses (white facets are the affected treatments).}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-57-1.pdf}
+\caption{\label{fig:unnamed-chunk-57}Probability of decision for domain C treatments as trial progresses (white facets are the affected treatments).}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-43-1.pdf}
-\caption{\label{fig:unnamed-chunk-43}Expected allocation probability in domain C treatments as trial progresses.}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-58-1.pdf}
+\caption{\label{fig:unnamed-chunk-58}Expected posterior probability treatment in domain C is effective as trial progresses.}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-44-1.pdf}
-\caption{\label{fig:unnamed-chunk-44}Probability of response as trial progresses.}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-60-1.pdf}
+\caption{\label{fig:unnamed-chunk-60}Expected allocation probability in domain C treatments as trial progresses.}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-45-1.pdf}
-\caption{\label{fig:unnamed-chunk-45}Number assigned to each treatment.}
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-61-1.pdf}
+\caption{\label{fig:unnamed-chunk-61}Probability of response as trial progresses.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{ASCOT_simulation_appendix_files/figure-latex/unnamed-chunk-62-1.pdf}
+\caption{\label{fig:unnamed-chunk-62}Number assigned to each treatment.}
 \end{figure}
 
 \clearpage

@@ -289,7 +289,7 @@ The baseline-response, $\beta_0$, and the treatment effects $\beta_d$ are given 
 
 $$
 \begin{aligned}
-\beta_0 &\sim \text{Normal}(0, 10^2) \\
+\beta_0 &\sim \text{Normal}(0, 2.5^2) \\
 \beta_{dk} &\overset{\text{iid}}{\sim} \text{Normal}(0, 1),\quad k=0,1,...,d_{K_d},\ d=1,2,3,....
 \end{aligned}
 $$
@@ -315,10 +315,10 @@ Sites are nested within region and will be treated as exchangeable within region
 $$
 \begin{aligned}
 \xi_{rs} &\overset{\text{iid}}{\sim} \text{Normal}\left(0, \sigma_{\xi_r}^2\right),\quad s=1,...,S_r\\
-\sigma_{\xi_r} &\overset{\text{iid}}{\sim} \text{Half-}t(3,0.1^2), 
+\sigma_{\xi_r} &\overset{\text{iid}}{\sim} \text{Half-}t(3,0.5^2), 
 \end{aligned},\ r=1,...,R.
 $$
-The mean of zero indicates that on average the sites have expected baseline-response $\rho_r$.
+The mean of zero indicates that on average the sites in region $r$ have expected baseline-response $\beta_0 + \rho_r$.
 
 ### Cohorts
 
@@ -335,7 +335,7 @@ $$
 \tau_1 &= 0 \\
 \tau_t &= \tau_{t-1} + \sigma_\tau\epsilon_t \\
 \epsilon_t &\overset{\text{iid}}{\sim} N(0, 1),\quad t=2,...,T \\
-\sigma_\tau &\sim \text{Half-}t(3, 0.1^2).
+\sigma_\tau &\sim \text{Half-}t(3, 0.5^2).
 \end{aligned}
 $$
 This prior enforces some smoothing of the baseline response across cohorts expecting only small variations between cohorts in temporal proximity.
@@ -344,7 +344,7 @@ This prior enforces some smoothing of the baseline response across cohorts expec
 
 Other covariates parameters will have prior
 $$
-\alpha \overset{\text{iid}}{\sim} N(0, 10^2)
+\alpha \overset{\text{iid}}{\sim} N(0, 2.5^2)
 $$
 
 ## Between Domain Interactions
