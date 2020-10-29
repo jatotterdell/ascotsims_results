@@ -1,7 +1,10 @@
 ---
 title: "ASCOT ADAPT Statistical Analysis Appendix"
 subtitle: "Australasian-India COVID-19 Trial Adaptive Platform Trial"
-date: "August 2020 - Version 1.0"
+date: |
+  | October 2020
+  | SAA Version: 1.1
+  | Based on core protocol version: 2.0
 output: 
   bookdown::pdf_document2:
     toc: true
@@ -29,15 +32,18 @@ library(tidyverse)
 library(kableExtra)
 ```
 
+
+
 # Version History {-}
 
 
 ```{=latex}
 \begin{center}
-    \begin{tabular}{lllp{5cm}}
+    \begin{tabular}{llp{8cm}}
     \hline
     Version & Date & Summary \\ \hline
     1.0 & August 2020 & Statistical analysis plan ASCOT ADPAT \\
+    1.1 & October 2020 & Revise RAR rules to enforce minimum of 1/3 to each intervention in a domain of only two interventions \\
     \hline
     \end{tabular}
 \end{center}
@@ -131,9 +137,9 @@ Treatment effect heterogeneity will be explored for the following variables as m
   * days since symptom onset $\leq 7$ days or $> 7$ days
   * required supplemental oxygen at time of randomisation or oxygen saturation less than 94% at room air
   * $<60$ years of age or $\geq 60$ years of age
-  * receipt of remdesivir at time of randomisation
-  * receipt corticosteroid at time of randomisation
-  * receipt of any other agent intended to be an antiviral agent against SARS-CoV-2
+  * receipt of corticosteroid
+  * receipt of remdesivir
+  * receipt of other agent intended to be an antiviral agent against SARS-CoV-2
   * participants receiving ACE inhibitor/ATII blocker therapy at the time of presentation
 
 Other domain-specific subgroup analyses may be specified in the domain appendices.
@@ -149,7 +155,8 @@ Following an analysis, some interventions in a domain may have been dropped, or 
 Interventions in a domain with non-zero randomisation probability (including standard of care) will be referred to as the actively allocated interventions.
 
 Response adaptive randomisation will be used to update the allocation ratios to the actively allocated interventions following each sequential analysis.
-The standard of care option within each domain will have a fixed allocation of $1/K^\prime_d$ where $K^\prime_d$ is the number of actively allocated interventions in the domain.
+For domains with more than 2 actively allocated interventions, the standard of care option (if still active) will have a fixed allocation of $1/K^\prime_d$ where $K^\prime_d$ is the number of actively allocated interventions in the domain.
+If a domain has only 2 interventions (one of which is standard of care), than a minimum allocation probability of 1/3 will be targeted for both interventions.
 
 # Endpoints and Estimands
 
@@ -163,7 +170,7 @@ Participants on pre-existing home BiPAP or CPAP will not be considered to have m
 
 * required invasive mechanical ventilation (i.e. intubation), or
 * graduated from CPAP only whilst asleep to BiPAP at any time, or
-* raduated from BiPAP only whilst asleep to BiPAP for >12 hours/day, or
+* graduated from BiPAP only whilst asleep to BiPAP for >12 hours/day, or
 * died by day 28. 
 
 This endpoint applies across all domains. 
@@ -269,7 +276,7 @@ The terms in the model are:
   * $\tau_t$ - adjusts for change in the baseline response over time since the trial commenced. Each $t$ represents a cohort of patients recruited in a given period of time and the initial cohort is the reference group $(\tau_1 = 0)$.
   * $\alpha$ - other covariates specified for inclusion in the primary model.
 
-The design matrices will be specified in terms of treatment coding and may include interactions for combinations of interventions within a domain. 
+The design matrices may include interactions for combinations of interventions within a domain. 
 For example if intervention $d_3$ was the combination of $d_1$ and $d_2$ given together as opposed to each alone then $\beta_{d3}$ would denote an interaction term coefficient.
 
 At times it will be more useful to consider the model in terms of the the response under each regimen $j=1,2,...,K_AK_BK_C$ within the referent group, i.e.
@@ -294,7 +301,7 @@ $$
 \end{aligned}
 $$
 
-The treatment effect parameter $\beta_d$ consists of a reference treatment with $\beta_{d1}=0$ and will also include a term for domain ineligibility or unavailability $\beta_{d0}$.
+The treatment effect parameter $\beta_d$ consists of a reference treatment, $\beta_{d1}$ and will also include a term for domain ineligibility or unavailability $\beta_{d0}$.
 For example, suppose at trial commencement two domains $A$ and $B$ are open and later in the trial a third domain $C$ is opened.
 Participants who entered the trial prior to domain $C$ opening were not randomised to that domain.
 Given that domain $C$ was unavailable to these participants they would contribute to $\beta_{C0}$.
@@ -315,7 +322,7 @@ Sites are nested within region and will be treated as exchangeable within region
 $$
 \begin{aligned}
 \xi_{rs} &\overset{\text{iid}}{\sim} \text{Normal}\left(0, \sigma_{\xi_r}^2\right),\quad s=1,...,S_r\\
-\sigma_{\xi_r} &\overset{\text{iid}}{\sim} \text{Half-}t(3,0.5^2), 
+\sigma_{\xi_r} &\overset{\text{iid}}{\sim} \text{Half-}t(3,1), 
 \end{aligned},\ r=1,...,R.
 $$
 The mean of zero indicates that on average the sites in region $r$ have expected baseline-response $\beta_0 + \rho_r$.
@@ -335,7 +342,7 @@ $$
 \tau_1 &= 0 \\
 \tau_t &= \tau_{t-1} + \sigma_\tau\epsilon_t \\
 \epsilon_t &\overset{\text{iid}}{\sim} N(0, 1),\quad t=2,...,T \\
-\sigma_\tau &\sim \text{Half-}t(3, 0.5^2).
+\sigma_\tau &\sim \text{Half-}t(3, 1).
 \end{aligned}
 $$
 This prior enforces some smoothing of the baseline response across cohorts expecting only small variations between cohorts in temporal proximity.
@@ -493,7 +500,7 @@ Pending review, these statistical decisions will inform platform conclusions suc
 Analyses will be conducted frequently throughout the trial.
 The first analysis will not be conducted before at least $100\times\max_d(K_d)$, that is, at least 100 participants per active treatment option within the largest domain.
 Subsequent analyses will be planned to occur at perpetually at fixed intervals (every 1 month) as long as the trial proceeds.
-If recruitment is slow, there may be little change in sample size from one analysis to the next, in which case, the analysis may be skipped.
+If recruitment is slower or faster than expected, there may be small or large changes in sample size from one analysis to the next, in which case the timing of analyses may be reviewed.
 
 The analyses will use all the data on participants who have reached the primary endpoint and have outcome data available to inform the current model.
 The current model will be used to inform updates to allocation ratios and statistical decisions.
@@ -502,21 +509,44 @@ The pre-specified adaptations are outlined below.
 
 ## Response-Adaptive Randomisation
 
-Following each analysis, the allocation probabilities to treatments within domains will be updated to be proportional to the probability that each treatment results in the lowest log-odds of response amongst all in that domain.
-If still active, the control option within each domain will have fixed allocation of $\rho_{d1}=1/K_d^\prime$ where $K_d^\prime$ is the number of active interventions in the domain following the current analysis. Otherwise, $\rho_{d1}=0$.
-For non-control treatments, the allocation probabilities to active arms are
-$$
-\varrho_{dk} = (1-\rho_{d1})\left[\sqrt{\frac{\varphi_{dk}}{n_{dk}}} \middle /\left(\sum_{k}\sqrt{\frac{\varphi_{dk}}{n_{dk}}}\right)\right],\quad k>1,\ d=1,2,3
-$$
-where $\varphi_{dk}$ is the probability treatment $k$ is best in domain $d$ and $n_{dk}$ is the number having received treatment $k$ in domain $d$.
+Following each analysis, the allocation probabilities to regimens will be updated to be proportional to the probability that each regimen results in the lowest log-odds of response amongst all still active regimens.
 
-The probability of receiving a given regimen, $j$, made up of treatments $A(j),B(j),C(j)$ from domains $A,B,C$ respectively is then $\rho_j=\varrho_{A(j)}\varrho_{B(j)}\varrho_{C(j)}$ assuming the participant is eligible for all interventions and domains. If a new participant is ineligible for an intervention then $\varrho_{dk}=0$ will be set for that intervention for the participant and the remaining values re-normalised.
+Once updated, the marginal allocation probability for each intervention will be determined.
+To maintain a degree of power on the intervention comparisons with standard of care, the allocation probabilities to regimens may be corrected to achieve a minimum marginal allocation probability.
+If still active, the standard of care option within each domain will have a targeted marginal allocation of $1/K_d^\prime$ where $K_d^\prime$ is the number of active interventions in the domain following the current analysis.
+If the domain includes only standard of care and one other active intervention, then a minimum allocation probability of 1/3 will be targeted to either intervention.
+
+The allocation probabilities to regimens are initially updated as
+$$
+\rho_j \propto \sqrt{\frac{\phi_j}{n_{j}+1}},\quad j=1,2,...,K_AK_BK_C
+$$
+where $\phi_j$ is the probability regimen $j$ is best and $n_{j}$ is the number having received regimen $j$.
+
+The marginal allocation probabilities to each intervention, $k$ in a domain $d$, are then calculated as
+$$
+\varrho_{dk} = \sum_{\{j|d(j)=k\}} \rho_j
+$$
+where $d(j)$ is the intervention from domain $d$ used in regimen $j$.
+
+If the value of $\varrho_{d1} < 1/K_d^\prime$ (allocation to standard of care in domain $d$ less than target) (or $\varrho_{dk} < 1/3$ if only one other active intervention in addition to standard of care) then the values of $\rho_j$ will be iteratively adjusted until the target marginal allocation is achieved.
+The correction can be made according to the following rule, assuming that $\delta$ is the target marginal allocation
+$$
+\rho_j = \begin{cases}
+\delta \frac{\rho_j}{\sum_{d(j)=k} \rho_j} & \text{ if } d(j) = k \\
+(1 - \delta) \frac{\rho_j}{\sum_{d(j)\ne k} \rho_j} & \text{ if } d(j) \ne k
+\end{cases}
+$$
+If multiple domains need to be corrected then the above may be iterated over domains until convergence of the allocation probabilities.
+The corrected regimen allocation probabilities are then used to assign regimens to future participants.
+The correction aims to maintain sufficient allocations to standard of care at the expense of potentially reducing the probability a participant receives the most probably best regimen at the time of their enrolment.
+
+If a new participant is ineligible for an intervention then any regimen involving that intervention will have $\rho_j=0$ set for those regimens and the remaining values re-normalised to sum to one when randomising that participant.
 
 
 ## Effectiveness
 
 At each analysis, the posterior probability that an intervention is effective (better than standard of care, see Section \@ref(treatment-contrasts)) will be compared to a threshold of 0.99.
-If this threshold is exceeded then a statistical decision of effectiveness will be made for the intervention and the no treatment option may be dropped from the set of active interventions in the domain (allocation probability set to 0 for the domain standard of care).
+If this threshold is exceeded then a statistical decision of effectiveness will be made for the intervention and the standard of care treatment option may be dropped from the set of active interventions in the domain (allocation probability set to 0 for all regimens which include that domain standard of care).
 
 ```{r}
 tab <- tribble(
