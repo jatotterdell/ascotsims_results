@@ -1,0 +1,712 @@
+---
+title: "ASCOT ADAPT Trial Simulation Report"
+subtitle: "Version 1.1"
+date: "January 2021"
+output: 
+  bookdown::pdf_document2:
+    toc: true
+    fig_align: center
+    fig_height: 4
+    fig_width: 6
+    latex_engine: xelatex
+    keep_tex: true
+    includes:
+      in_header: preamble.tex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = FALSE,
+	message = FALSE,
+	warning = FALSE
+)
+```
+
+
+```{r pkgs}
+library(ascotsims)
+library(tidyverse)
+library(magrittr)
+library(kableExtra)
+
+theme_set(theme_bw(base_size = 9) +
+            theme(panel.grid.minor = element_blank(),
+                  legend.key.height = unit(0.1, "lines")))
+
+cbp1 <- c("#999999", "#E69F00", "#56B4E9", "#009E73",
+          "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+cbp2 <- c("#000000", "#E69F00", "#56B4E9", "#009E73",
+          "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+```
+
+
+# Version History {-}
+
+
+```{=latex}
+\begin{center}
+    \begin{tabular}{lllp{5cm}}
+    \hline
+    Version & Date & Author & Description \\ \hline
+    1.0 & August 2020  & JT & Initial simulation results \\ 
+    1.1 & January 2021 & JT & Change to RAR scheme where minimum allocation of 1/3 enforced. \\ 
+    \hline
+    \end{tabular}
+\end{center}
+```
+
+\clearpage
+
+
+# Introduction
+
+This document is a supplement to the ASCOT ADAPT trial core protocol. 
+It outlines the technical details of the clinical trial simulations and results used in planning the ASCOT ADAPT trial decision thresholds. 
+The simulations are used to understand the operating characteristics of the platform trial under various design configurations.
+This is a living document where trial scenarios or trial summaries may be added as required.
+For full details of the analysis plan refer to the Statistical Analysis Appendix.
+
+\clearpage
+
+# Simulation Design
+
+## Model
+
+The primary endpoint in the trial is death from any cause or requirement of new intensive respiratory support (invasive or non-invasive ventilation) or vasopressor/inotropic support in the 28 days after randomisation. 
+This endpoint is binary and in these simulations a participants response is coded as 1 if they died or required new intensive respiratory support or vasopressor/inotropic support ventilation-free to 28 days and is 0 if they did not. 
+Therefore, a beneficial treatment is one which reduces the probability of response.
+The outcome is modelled by logistic regression and treatment effects are expressed in terms of their reduction in the log-odds of the outcome.
+
+### Domains
+
+For the purposes of this simulation document, 3 domains have been considered.
+To make the document generalisable, these domains and the comprising treatments are not explicitly denoted, but are treated as generic.
+
+The generic domains considered are labelled:
+
+  * Domain $A$, consisting of 4 treatment combinations $A_0.A_1,A_2,A_3$. Treatment $A_0$ is the absence of any treatment from domain $A$ (standard of care).
+  * Domain $B$, consisting of 3 treatments $B_0,B_1,B_2$. Treatment $B_0$ is the absence of any domain $B$ treatment.
+  * Domain $C$, consisting of 2 treatments $C_0,C_1$.
+
+A regimen is a combination of one treatment option from each domain.
+Every participant receives one regimen.
+The number of unique regimens in these simulations, assuming all combinations are viable, is $4\times 3\times 2=24$.
+
+The model used in these simulations are, for a given participant $i$
+$$
+\begin{aligned}
+\eta_i &= \beta_0 + x_{A(i)}^{\mathsf{T}}\beta_A + x_{B(i)}^{\mathsf{T}}\beta_B + x_{C(i)}^{\mathsf{T}}\beta_C \\
+\pi_i &= \text{logit}^{-1}(\eta_i)
+\end{aligned}, \quad i=1,2,3,...
+$$
+where $\eta_i$ is there participants linear predictor as given by the combination of treatments they receive and $\pi_i$ is the participants probability of ventilation-free survival by 28 days after enrolment.
+
+The vectors, e.g. $x_{A(i)}$, select the relevant parameters from $\beta_A$, for example if participant $i$ receives treatment $A_5$ then $x_{A(i)}^{\mathsf{T}} = (0\ 1\ 1\ 0\ 0\ 1)$ where $\beta_{A1}$ is the effect of treatment $A_1$ alone, $\beta_{A2}$ is the effect of $A_2$ alone, and $\beta_{A5}$ is the interaction effect between $A_1$ and $A_2$ when given in combination. 
+This complete set of treatment option within a domain is expressed by the design matrix.
+For example, domain $A$ has design
+$$
+ X_{A} = 
+\begin{blockarray}{ccccccc}
+          & \beta_{A0} & \beta_{A1} & \beta_{A2} & \beta_{A3} \\
+\begin{block}{r(cccccc)}
+      A_0 & 1 & 0 & 0 & 0 \\
+      A_1 & 0 & 1 & 0 & 0 \\
+      A_2 & 0 & 0 & 1 & 0 \\
+      A_3 & 0 & 0 & 0 & 1 \\
+\end{block}
+\end{blockarray}
+$$
+and the notation $A(i)$ indicates which row of the design matrix $X_A$ applies for participant $i$.
+
+The current model does not allow for interactions between separate domains, all treatment effects within domains are therefore assumed to be additive in combination.
+
+### Prior
+
+The prior distributions for the parameters are
+$$
+\begin{aligned}
+\beta_0 &\sim N(0, 10^2) \\
+\beta_{A0},\beta_{B0},\beta_{C0} &= 0 \\
+\beta_{A1},\beta_{A2},\beta_{A3},\beta_{B1},\beta_{B2},\beta_{C1} &\sim N(0, 1).
+\end{aligned}
+$$
+For identifiability, the effect of receiving $A_0$,$B_0$ and $C_0$ are set to zero implying that $\beta_0$ is the log-odds of response when no treatments are received in any domain (standard of care).
+
+### Model Quantities
+
+For the purpose of decision making, expected response under each regimen is of primary interest. 
+Define
+$$
+\begin{aligned}
+\eta_j &= \beta_0 + x_{A(j)}^{\mathsf{T}}\beta_A + x_{B(j)}^{\mathsf{T}}\beta_B + x_{C(j)}^{\mathsf{T}}\beta_C \\
+\pi_j &= \text{logit}^{-1}(\eta_j)
+\end{aligned},\quad j=1,...,48
+$$
+to be the log-odds and probability of response under regimen $j$. 
+As before, the notation $A(j)\in\{0,1,2,3\}$ indicates which combination of domain $A$ treatments forms regimen $j$.
+
+The parameters of primary interest are the treatment effects relative to no treatment (or another treatment within the domain) and the best treatment within each domain.
+
+In what follows, all probabilities are implicitly conditional on the model and available data at the time of the analysis.
+
+**Best Regimen**
+
+Define $j^\star = \text{argmin}_j \eta_j$ to be the regimen which minimises the log-odds of response.
+The probability that regimen $j$ is the best regimen (in terms of minimising the log-odds of response) is
+$$
+\mathbb P[\text{regimen }j\text{ is best}] = \mathbb P[j^\star = j] = \mathbb P[\eta_j < \eta_{l}, l\ne j],\quad j=1,...,48.
+$$
+
+**Best Treatment**
+
+Define the probability that a treatment combination within each domain $A$, $B$, and $C$ is in the best regimen by
+$$
+\begin{aligned}
+\mathbb P[\text{treatment }A_k\text{ is in best}] = \mathbb P[A(j^\star)=k],&\quad k=0,1,2,3 \\
+\mathbb P[\text{treatment }B_k\text{ is in best}] = \mathbb P[B(j^\star)=k],&\quad k=0,1,2 \\
+\mathbb P[\text{treatment }C_k\text{ is in best}] = \mathbb P[C(j^\star)=k],&\quad k=0,1
+\end{aligned}.
+$$
+
+**Treatment Comparisons**
+
+Define the probability that a treatment combination has a lower log-odds of the outcome than another treatment combination by
+$$
+\begin{aligned}
+\mathbb P[\text{treatment }A_k\text{ better than treatment } A_l] &=\mathbb P\left[x_{A(k)}^{\mathsf{T}}\beta_A < x_{A(l)}^{\mathsf{T}}\beta_A\right],\quad k,l\in\{0,1,2,3\} \\
+\mathbb P[\text{treatment }B_k\text{ better than treatment } B_l] &=\mathbb P\left[x_{B(k)}^{\mathsf{T}}\beta_B < x_{B(l)}^{\mathsf{T}}\beta_B\right],\quad k,l\in\{0,1,2\} \\
+\mathbb P[\text{treatment }C_k\text{ better than treatment } C_l] &=\mathbb P\left[x_{C(k)}^{\mathsf{T}}\beta_C < x_{C(l)}^{\mathsf{T}}\beta_C\right],\quad k,l\in\{0,1\}
+\end{aligned}
+$$
+
+For example, the probability that treatment $A_2$ reduces the log-odds of response compared to $A_0$ is
+$$
+\mathbb P[\text{treatment } A_5\text{ better than treatment } A_0] = \mathbb P[\beta_{A2}<0].
+$$
+
+## Decisions and Adaptations
+
+A variety of trial decisions and adaptations may be possible as the trial progresses, for example, dropping the no treatment option within a domain if at least one treatment is found effective (reduces the log-odds of response compared to no treatment), or dropping all other treatment options if one treatment is found superior to all others (results in the lowest log-odds of response amongst all treatments).
+
+Example decisions and their definitions are provided in Table \@ref(tab:dectab).
+These example decisions are presented for a single treatment, $A_5$.
+Not all decisions will be defined or of interest for all treatment combinations and these examples are indicative only.
+Some of the treatments overlap and some definitions are redundant in that they can be defined in terms of other decisions (e.g. harm is contained in futility and inferiority is the complement of superiority).
+
+```{r dectab}
+tab <- tribble(
+  ~ Decision, ~ Comparison, ~ Quantity, ~Threshold, ~Action,
+  "$A_5$ is effective", "$A_5$ vs $A_0$", "$\\mathbb P[\\beta_{A1}+\\beta_{A2}+\\beta_{A5}<0]$", "0.99", "Drop $A_0$",
+  "$A_5$ is harmful", "$A_5$ vs $A_0$", "$\\mathbb P[\\beta_{A1}+\\beta_{A2}+\\beta_{A5}>0]$", "0.99", "Drop $A_5$",
+  "$A_5$ is futile", "$A_5$ vs $A_0$", "$\\mathbb P[\\beta_{A1}+\\beta_{A2}+\\beta_{A5}>-\\Delta]$", "0.95", "Drop $A_5$",
+  "$A_5$ is equivalent", "$A_5$ vs $A_0$", "$\\mathbb P[|\\beta_{A1}+\\beta_{A2}+\\beta_{A5}|<\\Delta]$", "0.90", "Drop $A_5$",
+  "$A_5$ is futile", "$A_5$ vs $A_1$", "$\\mathbb P[\\beta_{A2}+\\beta_{A5}>-\\Delta]$", "0.95", "Drop $A_5$",
+  "$A_5$ is futile", "$A_5$ vs $A_2$", "$\\mathbb P[\\beta_{A1}+\\beta_{A5}>-\\Delta]$", "0.95", "Drop $A_5$",
+  "$A_5$ is superior", "$A_5$ vs all $A$", "$\\mathbb P[A(j^\\star)=5]$", "0.99", "Drop all $A$ except $A_5$",
+  "$A_5$ is inferior", "$A_5$ vs all $A$", "$\\mathbb P[A(j^\\star)\\ne5]$", "0.99", "Drop $A_5$"
+)
+kable(tab, booktabs = T, escape = F, linesep = "",
+      caption = "Example trial decisions and definitions.") %>%
+  kable_styling(latex_options = "HOLD_position")
+```
+
+For completeness, the actual decisions and thresholds used in the trial simulations for domain $A$ are given in Table \@ref(tab:simdectab).
+The decisions for domains $B$ and $C$ are similar except for the absence of the extra futility check for a combination treatment.
+
+```{r simdectab}
+tab <- tribble(
+  ~ Decision, ~ Comparison, ~ Quantity, ~Threshold, ~Action,
+  "$A_1$ is effective", "$A_1$ vs $A_0$", "$\\mathbb P[\\beta_{A1}<0]$", "$>0.99$", "Drop $A_0$",
+  "$A_2$ is effective", "$A_2$ vs $A_0$", "$\\mathbb P[\\beta_{A2}<0]$", "$>0.99$", "Drop $A_0$",
+  "$A_3$ is effective", "$A_3$ vs $A_0$", "$\\mathbb P[\\beta_{A3}<0]$", "$>0.99$", "Drop $A_0$",
+  "$A_4$ is effective", "$A_4$ vs $A_0$", "$\\mathbb P[\\beta_{A4}<0]$", "$>0.99$", "Drop $A_0$",
+  "$A_5$ is effective", "$A_5$ vs $A_0$", "$\\mathbb P[\\beta_{A1}+\\beta_{A2}+\\beta_{A5}<0]$", "$>0.99$", "Drop $A_0$",
+  "$A_1$ is futile", "$A_1$ vs $A_0$", "$\\mathbb P[\\beta_{A1}>-\\Delta]$", "$>0.95$", "Drop $A_1$",
+  "$A_2$ is futile", "$A_2$ vs $A_0$", "$\\mathbb P[\\beta_{A2}>-\\Delta]$", "$>0.95$", "Drop $A_2$",
+  "$A_3$ is futile", "$A_3$ vs $A_0$", "$\\mathbb P[\\beta_{A3}>-\\Delta]$", "$>0.95$", "Drop $A_3$",
+  "$A_4$ is futile", "$A_4$ vs $A_0$", "$\\mathbb P[\\beta_{A4}>-\\Delta]$", "$>0.95$", "Drop $A_4$",
+  "$A_5$ is futile", "$A_5$ vs $A_0$", "$\\mathbb P[\\beta_{A1}+\\beta_{A2}+\\beta_{A5}>-\\Delta]$", "$>0.95$", "Drop $A_5$",
+  "$A_5$ is futile", "$A_5$ vs $A_1$", "$\\mathbb P[\\beta_{A2}+\\beta_{A5}>-\\Delta]$", "$>0.95$", "Drop $A_5$",
+  "$A_5$ is futile", "$A_5$ vs $A_2$", "$\\mathbb P[\\beta_{A1}+\\beta_{A5}>-\\Delta]$", "$>0.95$", "Drop $A_5$",
+  "$A_1$ is superior", "$A_1$ vs all $A$", "$\\mathbb P[A(j^\\star)=1]$", "$>0.99$", "Drop all but $A_1$",
+  "$A_2$ is superior", "$A_2$ vs all $A$", "$\\mathbb P[A(j^\\star)=2]$", "$>0.99$", "Drop all but $A_2$",
+  "$A_3$ is superior", "$A_3$ vs all $A$", "$\\mathbb P[A(j^\\star)=3]$", "$>0.99$", "Drop all but $A_3$",
+  "$A_4$ is superior", "$A_4$ vs all $A$", "$\\mathbb P[A(j^\\star)=4]$", "$>0.99$", "Drop all but $A_4$",
+  "$A_5$ is superior", "$A_5$ vs all $A$", "$\\mathbb P[A(j^\\star)=5]$", "$>0.99$", "Drop all but $A_5$",
+    "$A_1$ is inferior", "$A_1$ vs all $A$", "$\\mathbb P[A(j^\\star)=1]$", "$<0.01/5$", "Drop $A_1$",
+  "$A_2$ is inferior", "$A_2$ vs all $A$", "$\\mathbb P[A(j^\\star)=2]$", "$<0.01/5$", "Drop $A_2$",
+  "$A_3$ is inferior", "$A_3$ vs all $A$", "$\\mathbb P[A(j^\\star)=3]$", "$<0.01/5$", "Drop $A_3$",
+  "$A_4$ is inferior", "$A_4$ vs all $A$", "$\\mathbb P[A(j^\\star)=4]$", "$<0.01/5$", "Drop $A_4$",
+  "$A_5$ is inferior", "$A_5$ vs all $A$", "$\\mathbb P[A(j^\\star)=5]$", "$<0.01/5$", "Drop $A_5$"
+)
+kable(tab, booktabs = T, escape = F, linesep = "",
+      caption = "Simulation trial decisions and thresholds $(\\Delta = \\ln(1.1))$") %>%
+  kable_styling(latex_options = "HOLD_position")
+```
+
+
+## Simulation Assumptions
+
+The following assumptions are made for the purpose of simulation:
+
+  * all combinations of treatment are allowed and all participants are eligible for all treatment combinations.
+  * there are no interactions between treatment effects.
+  * additional covariates to be included in the full model separate from the effect of treatment have not been included (e.g. adjustment for region, site, and time of enrolment).
+  * no drop-outs occur, there is no missing data, and at the time of each interim analysis full information is available on all enrolled participants.
+  * the trial is perpetual (there is no criteria to completely stop enrolment to the trial).
+  * for computational purposes, mean-field variational Bayes is used to approximate posterior densities and posterior quantities are calculated on the basis of 20,000 Monte Carlo draws from this posterior.
+  * Summaries of trial operating characteristics are based on 10,000 simulations under each scenario.
+
+
+## Scenarios
+
+In all scenarios, the simulations assume that the first interim occurs when 400 participants have completed follow-up and subsequent interim analyses occur every additional 200 participants.
+For the purposes of simulation, results up to a total trial sample size of 5,000 participants are presented. In all scenarios the baseline probability of response was 0.2 and the reference value for futility was $\ln(1.1)$.
+
+The scenarios considered are summarised in Table \@ref(tab:scetab).
+
+```{r scetab}
+tab <- tribble(
+  ~ Scenario, ~Description, ~`Effect size (OR)`,
+  "Global null", "All interventions in all domains have no effect", "$1.00$",
+  "One effective", "One intervention in a domain increases odds", "$1.10$",
+  "One effective", "One intervention in a domain reduces odds", "$1/1.10$",
+  "One effective", "One intervention in a domain reduces odds", "$1/1.25$",
+  "One effective", "One intervention in a domain reduces odds", "$1/1.50$",
+  "One effective", "One intervention in a domain reduces odds", "$1/2.00$",
+  "Two effective", "Two interventions in a domain increase odds", "$1.10$",
+  "Two effective", "Two interventions in a domain reduce odds", "$1/1.10$",
+  "Two effective", "Two interventions in a domain reduce odds", "$1/1.25$",
+  "Two effective", "Two interventions in a domain reduce odds", "$1/1.50$",
+  "Two effective", "Two interventions in a domain reduce odds", "$1/2.00$",
+)
+kable(tab, booktabs = T, escape = F, linesep = "",
+      caption = "Trial simulation scenarios.") %>%
+  kable_styling(latex_options = "HOLD_position")
+```
+
+\clearpage
+
+# Operating Characteristics
+
+For each scenario we present various operating characteristics.
+The focus is on the probability of triggering each decision as the trial progresses, the changing probability of allocation to each treatment, and the probability of response.
+
+## Domain A (4 treatments, one as standard of care)
+
+```{r}
+res0 <- readRDS("~/out_files/ascot/ascot_sims5/fin_null.rds")
+res0$res_trt %<>% ungroup() %>% 
+  mutate(OR = "1.00")
+res0$res_trt_intrm %<>% ungroup() %>% 
+  mutate(OR = "1.00")
+res0$res_trial %<>% ungroup() %>% 
+  mutate(OR = "1.00")
+
+res <- readRDS("~/out_files/ascot/ascot_sims5/fin_eff_domA.rds")
+res$res_trt %<>% ungroup() %>% 
+  mutate(OR = c("1.10", paste0("1/", c('1.10','1.25','1.50','2.00'))))
+res$res_trt_intrm %<>% ungroup() %>% 
+  mutate(OR = c("1.10", paste0("1/", c('1.10','1.25','1.50','2.00'))))
+res$res_trial %<>% ungroup() %>% 
+  mutate(OR = c("1.10", paste0("1/", c('1.10','1.25','1.50','2.00'))))
+```
+
+
+### One Treatment Effect
+
+```{r, fig.cap="Probability of decision for domain A treatments as trial progresses (white facets are the affected treatments).", fig.height=6}
+p <- res$res_trial %>%
+  unnest(data) %>%
+  bind_rows(res0$res_trial %>% unnest(data)) %>%
+  filter(grepl("a", treatment)) %>%
+  group_by(OR, treatment) %>% 
+  select(ends_with("at")) %>%
+  gather(key, value, -OR, -treatment) %>%
+  group_by(OR, treatment, key) %>%
+  count(value) %>% 
+  ungroup() %>%
+  complete(OR, treatment, key, value, fill = list(n = 0)) %>%
+  group_by(OR = factor(OR, levels = c("1.10", "1.00", "1/1.10", "1/1.25", "1/1.50", "1/2.00")), treatment, key) %>%
+  mutate(p = n / sum(n), cp = cumsum(p)) %>%
+  ungroup() %>%
+  filter(!is.na(value)) %>%
+  mutate(
+    ss = res$cfg$n_seq[[1]][value],
+    domain = paste("Domain:", toupper(str_sub(treatment, 1, 1))),
+    treatment = paste0("A", str_sub(treatment, 2, 2)),
+    decision = factor(
+      key,
+      levels = c("trig_eff_at", "trig_sup_at", "trig_ineff_at", "trig_inf_at", 
+                 "trig_fut_at", "trig_equ_at", "trig_drop_at"),
+      labels = c("Effective", "Superior", "Harmful", "Inferior", "Futile", "Equivalent", "Drop"))) %>% 
+  ggplot(., aes(ss, p)) +
+  facet_grid(OR ~ fct_inorder(treatment)) +
+  geom_line(aes(y = cp, colour = decision)) +
+  scale_colour_manual("Decision", values = cbp2) +
+  labs(x = "Total trial sample size", y = "Cumulative Probability") +
+  ylim(0, NA) +
+  theme(legend.position = "top",
+        axis.text.x = element_text(angle = 45, hjust = 1))
+
+g <- ggplot_gtable(ggplot_build(p))
+stript <- which(grepl('strip-t', g$layout$name))
+fills <- c("grey85", "grey85", "grey85", "white", "grey85", "grey85")
+k <- 1
+for (i in stript) {
+  j <- which(grepl('rect', g$grobs[[i]]$grobs[[1]]$childrenOrder))
+  g$grobs[[i]]$grobs[[1]]$children[[j]]$gp$fill <- fills[k]
+  k <- k+1
+}
+grid::grid.draw(g)
+```
+
+
+```{r, fig.cap="Expected posterior probability treatment in domain A is effective as trial progresses."}
+res$res_trt_intrm %>%
+  unnest(data) %>%
+  bind_rows(res0$res_trt_intrm %>% unnest(data)) %>%
+  filter(grepl("a[1-9]", treatment)) %>%
+  group_by(OR = factor(OR, levels = c("1.10", "1.00", "1/1.10", "1/1.25", "1/1.50", "1/2.00")), interim, treatment) %>%
+  summarise(p = mean(trt_eff)) %>%
+  mutate(domain = paste("Domain:", toupper(str_sub(treatment, 1, 1))),
+         treatment = paste0("A", str_sub(treatment, 2, 2))) %>% 
+  ungroup() %>%
+  mutate(ss = res$cfg$n_seq[[1]][interim],
+         ref = 1/length(unique(treatment))) %>%
+  ggplot(., aes(ss, p, group = treatment, colour = treatment)) +
+  facet_wrap(~ OR) +
+  geom_line() +
+  geom_hline(aes(yintercept = 0.5), linetype = 2) +
+  scale_colour_manual("Treatment", values = cbp2[-1]) +
+  labs(x = "Total trial sample size", y = "Expected posterior probability effective",
+       colour = "Treatment") +
+  theme(legend.position = "top") +
+  ylim(NA, 1)
+```
+
+
+```{r, fig.cap="Expected posterior summary (mean and 95% CI) of treatment effect in domain A as trial progresses.", fig.height=6, eval=FALSE, include=FALSE}
+res$res_trt_intrm %>%
+  unnest(data) %>%
+  bind_rows(res0$res_trt_intrm %>% unnest(data)) %>%
+  filter(grepl("a[1-9]", treatment)) %>%
+  group_by(OR = factor(OR, levels = c("1.10", "1.00", "1/1.10", "1/1.25", "1/1.50", "1/2.00")), interim, treatment) %>%
+  summarise(m = mean(trt_mu), l = mean(trt_lb), u = mean(trt_ub)) %>%
+  mutate(domain = paste("Domain:", toupper(str_sub(treatment, 1, 1))),
+         treatment = paste0("A", str_sub(treatment, 2, 2))) %>% 
+  ungroup() %>%
+  mutate(ss = res$cfg$n_seq[[1]][interim],
+         ref = 1/length(unique(treatment))) %>%
+  ggplot(., aes(ss, m, colour = treatment, group = treatment)) +
+  facet_wrap(~ OR, ncol = 2) +
+  geom_pointrange(aes(ymin = l, ymax = u), position = position_dodge(width = 175), size = 0.5, fatten = 0.75) +
+  geom_hline(aes(yintercept = 0), linetype = 2) +
+  scale_colour_manual("Treatment", values = cbp2[-1]) +
+  labs(x = "Total trial sample size", y = "Expected posterior summary",
+       colour = "Treatment") +
+  theme(legend.position = "top") +
+  ylim(NA, 1)
+```
+
+
+```{r fig6, fig.cap="Expected allocation probability in domain A treatments as trial progresses. Affected treatments are $A_3$."}
+res$res_trt_intrm %>%
+  unnest(data) %>%
+  bind_rows(res0$res_trt_intrm %>% unnest(data)) %>%
+  filter(grepl("a", treatment)) %>%
+  group_by(OR = factor(OR, levels = c("1.10", "1.00", "1/1.10", "1/1.25", "1/1.50", "1/2.00")), interim, treatment) %>%
+  summarise(p = mean(p_rand_trt)) %>%
+  mutate(domain = paste("Domain:", toupper(str_sub(treatment, 1, 1))),
+         treatment = paste0("A", str_sub(treatment, 2, 2))) %>% 
+  ungroup() %>%
+  mutate(ss = res$cfg$n_seq[[1]][interim],
+         ref = 1/length(unique(treatment))) %>%
+  ggplot(., aes(ss, p, group = treatment, colour = treatment)) +
+  facet_wrap(~ OR) +
+  geom_line() +
+  geom_hline(aes(yintercept = ref), linetype = 2) +
+  scale_colour_manual("Treatment", values = cbp2) +
+  labs(x = "Total trial sample size", y = "Expected allocation probability",
+       colour = "Treatment") +
+  theme(legend.position = "top") +
+  ylim(0, NA)
+```
+
+
+```{r fig7, fig.cap="Probability of response as trial progresses."}
+res$res_trt_intrm %>%
+  unnest(data) %>%
+  bind_rows(res$res_trt %>% unnest(data)) %>%
+  filter(grepl("c", treatment)) %>%
+  group_by(OR = factor(OR, levels = c("1.10", "1.00", "1/1.10", "1/1.25", "1/1.50", "1/2.00")), interim, trial) %>%
+  summarise(p = sum(y_agg_enr_trt) / sum(n_agg_enr_trt)) %>%
+  ungroup() %>%
+  mutate(ss = res$cfg$n_seq[[1]][interim]) %>%
+  ggplot(., aes(ss, p, group = ss)) +
+  facet_wrap( ~ OR) +
+  geom_violin() +
+  geom_hline(yintercept = 0.2, linetype = 2) +
+  scale_colour_discrete(labels = exp(-sapply(res$cfg$b, `[`, 2))) +
+  labs(x = "Total trial sample size", y = "Event probability amongst recruited cohort") +
+  ylim(0, NA)
+```
+
+
+```{r, fig.cap="Number assigned to each treatment.", fig.height=6}
+p <- res$res_trt_intrm %>% 
+  unnest(data) %>%
+  bind_rows(res0$res_trt_intrm %>% unnest(data)) %>%
+  filter(grepl("a", treatment)) %>%
+  group_by(OR = factor(OR, levels = c("1.10", "1.00", "1/1.10", "1/1.25", "1/1.50", "1/2.00")), treatment, interim) %>%
+  select(n_agg_enr_trt) %>%
+  summarise(m = mean(n_agg_enr_trt), med = median(n_agg_enr_trt), lb = quantile(n_agg_enr_trt, 0.25), ub = quantile(n_agg_enr_trt, 0.75)) %>%
+  ungroup() %>%
+  mutate(ss = res$cfg$n_seq[[1]][interim],
+         treatment = paste0("A", str_sub(treatment, 2, 2))) %>%
+  ggplot(., aes(ss, n_agg_enr_trt, group = ss)) +
+  facet_grid(OR ~ treatment) +
+  geom_pointrange(aes(y = med, ymin = lb, ymax = ub), size = 0.5, fatten = 0.75) +
+  labs(x = "Sample size", y = "Number assigned to treatment (median and IQR)") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+g <- ggplot_gtable(ggplot_build(p))
+stript <- which(grepl('strip-t', g$layout$name))
+fills <- c("grey85", "grey85", "grey85", "white", "grey85", "grey85")
+k <- 1
+for (i in stript) {
+  j <- which(grepl('rect', g$grobs[[i]]$grobs[[1]]$childrenOrder))
+  g$grobs[[i]]$grobs[[1]]$children[[j]]$gp$fill <- fills[k]
+  k <- k+1
+}
+grid::grid.draw(g)
+```
+
+
+```{r, fig.cap="Expected treatment effect summary.", include=FALSE}
+res$res_trt_intrm %>%
+  unnest(data) %>%
+  bind_rows(res$res_trt %>% unnest(data)) %>%
+  filter(grepl("a[1-9]", treatment)) %>%
+  mutate(trt_hdiw = trt_ub - trt_lb) %>%
+  select(OR, interim, treatment, trt_mu, trt_lb, trt_ub, trt_eff, trt_bes, trt_fut, trt_hdiw) %>%
+  group_by(OR, interim, treatment) %>%
+  summarise_all(mean) %>%
+  ggplot(., aes(interim, trt_mu)) +
+  facet_grid(treatment ~ OR) +
+  geom_pointrange(aes(ymin = trt_lb, ymax = trt_ub), size = 0.2) +
+  geom_hline(yintercept = 0, linetype = 2)
+```
+
+
+```{r, fig.cap="Distribution of treatment quantities.", include=TRUE}
+res$res_trt_intrm %>%
+  unnest(data) %>%
+  bind_rows(res0$res_trt_intrm %>% unnest(data)) %>%
+  filter(grepl("a1|a3", treatment)) %>%
+  mutate(trt_hdiw = trt_ub - trt_lb) %>%
+  select(OR, interim, treatment, trt_eff, trt_bes, trt_fut) %>%
+  gather(key, value, -OR, -interim, -treatment) %>%
+  mutate(ss = res$cfg$n_seq[[1]][interim],
+         treatment = paste0("A", str_sub(treatment, 2, 2)),
+         quantity = factor(key, levels = c("trt_eff", "trt_bes", "trt_fut"),
+                           labels = c("Pr(effective)", "Pr(superior)", "Pr(futile)"))) %>%
+  group_by(OR = factor(OR, levels = c("1.10", "1.00", "1/1.10", "1/1.25", "1/1.50", "1/2.00")), interim, treatment) %>%
+  ggplot(., aes(ss, value)) + 
+  facet_grid(OR~treatment) + 
+  geom_boxplot(aes(fill = quantity, colour = quantity, group=paste(quantity, interim)), outlier.shape = NA) +
+  scale_fill_manual(values = cbp2) +
+  scale_colour_manual(values = cbp2) +
+  labs(x = "Total trial sample size", y = "Probability", fill = "Quantity", colour = "Quantity") +
+  theme(legend.position = "top")
+```
+
+
+\clearpage
+
+## Domain B (3 treatments, one as standard of care)
+
+```{r}
+res0 <- readRDS("~/out_files/ascot/ascot_sims5/fin_null.rds")
+res0$res_trt %<>% ungroup() %>% 
+  mutate(OR = "1.00")
+res0$res_trt_intrm %<>% ungroup() %>% 
+  mutate(OR = "1.00")
+res0$res_trial %<>% ungroup() %>% 
+  mutate(OR = "1.00")
+
+res <- readRDS("~/out_files/ascot/ascot_sims5/fin_eff_domB.rds")
+res$res_trt %<>% ungroup() %>% 
+  mutate(OR = c("1.10", paste0("1/", c('1.10','1.25','1.50','2.00'))))
+res$res_trt_intrm %<>% ungroup() %>% 
+  mutate(OR = c("1.10", paste0("1/", c('1.10','1.25','1.50','2.00'))))
+res$res_trial %<>% ungroup() %>% 
+  mutate(OR = c("1.10", paste0("1/", c('1.10','1.25','1.50','2.00'))))
+```
+
+### One Treatment Effect
+
+```{r, fig.cap="Probability of decision for domain B treatments as trial progresses (white facets are the affected treatments).", fig.height=6}
+p <- res$res_trial %>%
+  unnest(data) %>%
+  bind_rows(res0$res_trial %>% unnest(data)) %>%
+  filter(grepl("b", treatment)) %>%
+  group_by(OR, treatment) %>% 
+  select(ends_with("at")) %>%
+  gather(key, value, -OR, -treatment) %>%
+  group_by(OR, treatment, key) %>%
+  count(value) %>% 
+  ungroup() %>%
+  complete(OR, treatment, key, value, fill = list(n = 0)) %>%
+  group_by(OR = factor(OR, levels = c("1.10", "1.00", "1/1.10", "1/1.25", "1/1.50", "1/2.00")), treatment, key) %>%
+  mutate(p = n / sum(n), cp = cumsum(p)) %>%
+  ungroup() %>%
+  filter(!is.na(value)) %>%
+  mutate(
+    ss = res$cfg$n_seq[[1]][value],
+    domain = paste("Domain:", toupper(str_sub(treatment, 1, 1))),
+    treatment = paste0("B", str_sub(treatment, 2, 2)),
+    decision = factor(
+      key,
+      levels = c("trig_eff_at", "trig_sup_at", "trig_ineff_at", "trig_inf_at", 
+                 "trig_fut_at", "trig_equ_at", "trig_drop_at"),
+      labels = c("Effective", "Superior", "Harmful", "Inferior", "Futile", "Equivalent", "Drop"))) %>% 
+  ggplot(., aes(ss, p)) +
+  facet_grid(OR ~ fct_inorder(treatment)) +
+  geom_line(aes(y = cp, colour = decision)) +
+  scale_colour_manual("Decision", values = cbp2) +
+  labs(x = "Total trial sample size", y = "Cumulative Probability") +
+  ylim(0, NA) +
+  theme(legend.position = "top",
+        axis.text.x = element_text(angle = 45, hjust = 1))
+
+g <- ggplot_gtable(ggplot_build(p))
+stript <- which(grepl('strip-t', g$layout$name))
+fills <- c("grey85", "grey85", "white")
+k <- 1
+for (i in stript) {
+  j <- which(grepl('rect', g$grobs[[i]]$grobs[[1]]$childrenOrder))
+  g$grobs[[i]]$grobs[[1]]$children[[j]]$gp$fill <- fills[k]
+  k <- k+1
+}
+grid::grid.draw(g)
+```
+
+
+```{r, fig.cap="Expected allocation probability in domain B treatments as trial progresses. Affected treatments are $A_3$."}
+res$res_trt_intrm %>%
+  unnest(data) %>%
+  bind_rows(res0$res_trt_intrm %>% unnest(data)) %>%
+  filter(grepl("b", treatment)) %>%
+  group_by(OR = factor(OR, levels = c("1.10", "1.00", "1/1.10", "1/1.25", "1/1.50", "1/2.00")), interim, treatment) %>%
+  summarise(p = mean(p_rand_trt)) %>%
+  mutate(domain = paste("Domain:", toupper(str_sub(treatment, 1, 1))),
+         treatment = paste0("B", str_sub(treatment, 2, 2))) %>% 
+  ungroup() %>%
+  mutate(ss = res$cfg$n_seq[[1]][interim],
+         ref = 1/length(unique(treatment))) %>%
+  ggplot(., aes(ss, p, group = treatment, colour = treatment)) +
+  facet_wrap(~ OR) +
+  geom_line() +
+  geom_hline(aes(yintercept = ref), linetype = 2) +
+  scale_colour_manual("Treatment", values = cbp2) +
+  labs(x = "Total trial sample size", y = "Expected allocation probability",
+       colour = "Treatment") +
+  theme(legend.position = "top") +
+  ylim(0, NA)
+```
+
+
+\clearpage
+
+## Domain C (2 treatments, one as standard of care)
+
+```{r}
+res0 <- readRDS("~/out_files/ascot/ascot_sims5/fin_null.rds")
+res0$res_trt %<>% ungroup() %>% 
+  mutate(OR = "1.00")
+res0$res_trt_intrm %<>% ungroup() %>% 
+  mutate(OR = "1.00")
+res0$res_trial %<>% ungroup() %>% 
+  mutate(OR = "1.00")
+
+res <- readRDS("~/out_files/ascot/ascot_sims5/fin_eff_domC.rds")
+res$res_trt %<>% ungroup() %>% 
+  mutate(OR = c("1.10", paste0("1/", c('1.10','1.25','1.50','2.00'))))
+res$res_trt_intrm %<>% ungroup() %>% 
+  mutate(OR = c("1.10", paste0("1/", c('1.10','1.25','1.50','2.00'))))
+res$res_trial %<>% ungroup() %>% 
+  mutate(OR = c("1.10", paste0("1/", c('1.10','1.25','1.50','2.00'))))
+```
+
+### One Treatment Effect
+
+```{r, fig.cap="Probability of decision for domain C treatments as trial progresses (white facets are the affected treatments).", fig.height=6}
+p <- res$res_trial %>%
+  unnest(data) %>%
+  bind_rows(res0$res_trial %>% unnest(data)) %>%
+  filter(grepl("c", treatment)) %>%
+  group_by(OR, treatment) %>% 
+  select(ends_with("at")) %>%
+  gather(key, value, -OR, -treatment) %>%
+  group_by(OR, treatment, key) %>%
+  count(value) %>% 
+  ungroup() %>%
+  complete(OR, treatment, key, value, fill = list(n = 0)) %>%
+  group_by(OR = factor(OR, levels = c("1.10", "1.00", "1/1.10", "1/1.25", "1/1.50", "1/2.00")), treatment, key) %>%
+  mutate(p = n / sum(n), cp = cumsum(p)) %>%
+  ungroup() %>%
+  filter(!is.na(value)) %>%
+  mutate(
+    ss = res$cfg$n_seq[[1]][value],
+    domain = paste("Domain:", toupper(str_sub(treatment, 1, 1))),
+    treatment = paste0("C", str_sub(treatment, 2, 2)),
+    decision = factor(
+      key,
+      levels = c("trig_eff_at", "trig_sup_at", "trig_ineff_at", "trig_inf_at", 
+                 "trig_fut_at", "trig_equ_at", "trig_drop_at"),
+      labels = c("Effective", "Superior", "Harmful", "Inferior", "Futile", "Equivalent", "Drop"))) %>% 
+  ggplot(., aes(ss, p)) +
+  facet_grid(OR ~ fct_inorder(treatment)) +
+  geom_line(aes(y = cp, colour = decision)) +
+  scale_colour_manual("Decision", values = cbp2) +
+  labs(x = "Total trial sample size", y = "Cumulative Probability") +
+  ylim(0, NA) +
+  theme(legend.position = "top",
+        axis.text.x = element_text(angle = 45, hjust = 1))
+
+g <- ggplot_gtable(ggplot_build(p))
+stript <- which(grepl('strip-t', g$layout$name))
+fills <- c("grey85", "white")
+k <- 1
+for (i in stript) {
+  j <- which(grepl('rect', g$grobs[[i]]$grobs[[1]]$childrenOrder))
+  g$grobs[[i]]$grobs[[1]]$children[[j]]$gp$fill <- fills[k]
+  k <- k + 1
+}
+grid::grid.draw(g)
+```
+
+
+```{r, fig.cap="Expected allocation probability in domain C treatments as trial progresses. Affected treatments are $A_3$."}
+res$res_trt_intrm %>%
+  unnest(data) %>%
+  bind_rows(res0$res_trt_intrm %>% unnest(data)) %>%
+  filter(grepl("c", treatment)) %>%
+  group_by(OR = factor(OR, levels = c("1.10", "1.00", "1/1.10", "1/1.25", "1/1.50", "1/2.00")), interim, treatment) %>%
+  summarise(p = mean(p_rand_trt)) %>%
+  mutate(domain = paste("Domain:", toupper(str_sub(treatment, 1, 1))),
+         treatment = paste0("C", str_sub(treatment, 2, 2))) %>% 
+  ungroup() %>%
+  mutate(ss = res$cfg$n_seq[[1]][interim],
+         ref = 1/length(unique(treatment))) %>%
+  ggplot(., aes(ss, p, group = treatment, colour = treatment)) +
+  facet_wrap(~ OR) +
+  geom_line() +
+  geom_hline(aes(yintercept = ref), linetype = 2) +
+  scale_colour_manual("Treatment", values = cbp2) +
+  labs(x = "Total trial sample size", y = "Expected allocation probability",
+       colour = "Treatment") +
+  theme(legend.position = "top") +
+  ylim(0, NA)
+```

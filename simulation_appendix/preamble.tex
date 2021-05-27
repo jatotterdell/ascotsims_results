@@ -1,0 +1,27 @@
+\usepackage{booktabs}
+\usepackage{blkarray}
+\usepackage{pdflscape}
+\usepackage{lastpage}
+\usepackage{vhistory}
+\usepackage{titling}
+\usepackage{fontspec}
+\pretitle{\begin{center}
+\includegraphics[width=2in,height=2in]{../image.jpg}\LARGE\\}
+\posttitle{\end{center}}
+\newcommand{\blandscape}{\begin{landscape}}
+\newcommand{\elandscape}{\end{landscape}}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LO]{ASCOT ADAPT Statistical Appendix}
+\fancyfoot[LO]{Version 2.0, October, 2020}
+\fancyfoot[RO]{\thepage\ of \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\setlength{\headheight}{14pt}
+
+\setromanfont[Ligatures=TeX]{Latin Modern Roman}
+\setsansfont[Ligatures=TeX]{Latin Modern Sans}
+\setmonofont[Ligatures=TeX]{Latin Modern Mono}
+\setmathfont[Ligatures=TeX]{Latin Modern Math}
+\renewcommand{\familydefault}{\sfdefault}
